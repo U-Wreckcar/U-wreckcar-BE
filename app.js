@@ -14,6 +14,9 @@ app.use(
     })
 );
 
+const router = require('./routes/router');
+app.use('/api', router);
+
 app.get('/', async (req, res) => {
     console.log(req.body);
     res.status(200).send('Ok.');
