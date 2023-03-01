@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon",
-    "start": "nodemon app.js --ignore node_modules",
+    "start": "nodemon --exec babel-node app.js --ignore node_modules",
     "test": "jest"
   },
   "keywords": [],
@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "link-shortener": "^1.2.1",
     "mysql2": "^3.1.2",
     "sequelize": "^6.28.0"
   },
