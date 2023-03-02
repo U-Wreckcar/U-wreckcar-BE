@@ -1,28 +1,17 @@
-
 const {
-    asyncWrapper    // 
-  } = require('../utils/middleware');
-
+    asyncWrapper, //
+} = require('../utils/middleware');
 
 module.exports = {
     // 생성관련
-    create:{
-        
-    },
-    
+    create: {},
+
     // 변경 관련
-    update:{
+    update: {},
 
-    },
-    
     // 조회 관련
-    get:{
+    get: {},
 
-    },
-    
     // 삭제 관련
-    delelte:{
-
-    }
-
-}
+    delelte: {},
+};
