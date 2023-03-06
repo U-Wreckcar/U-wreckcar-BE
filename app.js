@@ -8,6 +8,7 @@ import passport from 'passport';
 import { Strategy as KakaoStrategy } from 'passport-kakao';
 import { router as UserRouter } from './src/routes/userRouter.js';
 import { router as UTMRouter } from './src/routes/utmRouter.js';
+// import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
 
 const app = express();
 
@@ -72,13 +73,12 @@ passport.deserializeUser(function (user, done) {
 app.use(UserRouter);
 app.use(UTMRouter);
 
-app.get('/export/excell', async (req, res) => {
+app.get('/', async (req, res) => {
     try {
-        await exportDataToExcel();
-        res.send('엑셀파일 익스퍼트가 잘 되었습니다');
+        res.send('Hi !!');
     } catch (error) {
         console.error(error);
-        res.status(500).send('엑셀파일 익스퍼트가 실패하였습니다.');
+        res.status(500).send('노 하이');
     }
 });
 
