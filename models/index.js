@@ -36,6 +36,10 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+sequelize.sync({ force: true });
+
+// force true 시 디비 날려버리고 새로만듭니다! 첫실행 후 꼭 false로 바꿔주기!
+
 export { sequelize, Sequelize };
 
 export default db;

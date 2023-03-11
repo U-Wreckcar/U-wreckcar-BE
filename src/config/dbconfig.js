@@ -10,7 +10,4 @@ export default {
         "password": process.env.MYSQL_DB_ENV_PASSWORDM,
         "database": process.env.MYSQL_DB_ENV_DATABASE
     }
-
-
-
 }
