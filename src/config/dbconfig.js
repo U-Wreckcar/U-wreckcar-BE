@@ -1,7 +1,6 @@
 // const dotenv = require("dotenv");
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 dotenv.config();
-
 
 export default {
     "test_db_config":{
@@ -11,3 +10,4 @@ export default {
         "database": process.env.MYSQL_DB_ENV_DATABASE
     }
 }
+
