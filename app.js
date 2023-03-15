@@ -9,7 +9,7 @@ import { Strategy as KakaoStrategy } from 'passport-kakao';
 import { router as UserRouter } from './src/routes/userRouter.js';
 import { router as UTMRouter } from './src/routes/utmRouter.js';
 // import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
-import db from './models/index.cjs';
+import db from './models/index.js';
 
 const app = express();
 

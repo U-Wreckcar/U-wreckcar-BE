@@ -1,17 +1,17 @@
-const dotenv = require('dotenv');
-const Sequelize = require('sequelize');
-const Utms = require('./utms.cjs');
-const Users = require('./users.cjs');
-const User_utm_mediums = require('./user-utm-mediums.cjs');
-const User_utm_sources = require('./user-utm-sources.cjs');
+import dotenv from 'dotenv';
+import Sequelize from 'sequelize';
+import Utms from './utms.js';
+import Users from './users.js';
+import User_utm_mediums from './user-utm-mediums.js';
+import User_utm_sources from './user-utm-sources.js';
 
 dotenv.config();
 
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config.cjs')[env];
+import config from '../config/config.js';
 const db = {};
 
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const sequelize = new Sequelize(config[env].database, config[env].username, config[env].password, config[env]);
 
 db.Utms = Utms(sequelize, Sequelize);
 db.Users = Users(sequelize, Sequelize);
@@ -27,4 +27,4 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db;
+export default db;

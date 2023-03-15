@@ -1,6 +1,5 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 
-// .env 파일에서 환경 변수를 읽어들입니다.
 dotenv.config();
 
 const config = {
@@ -27,4 +26,4 @@ const config = {
     },
 };
 
-module.exports = config;
+export default config;

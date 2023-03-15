@@ -1,4 +1,4 @@
-import db from '../../models/index.cjs';
+import db from '../../models/index.js';
 
 // UTM 링크 저장.(테스트)
 export async function createUtmData(user_id, utm_source, utm_medium) {

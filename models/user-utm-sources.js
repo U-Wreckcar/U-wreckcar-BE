@@ -1,4 +1,4 @@
-const { Model } = require('sequelize');
+import { Model, DataTypes } from 'sequelize';
 
 const User_utm_sources = (sequelize, DataTypes) => {
     const User_utm_sources = sequelize.define(
@@ -43,41 +43,8 @@ const User_utm_sources = (sequelize, DataTypes) => {
             sourceKey: 'user_utm_source_id',
         });
     };
-    // class User_utm_sources extends Model {
-    //     static associate(models) {
-    //         this.belongsTo(models.Users, {
-    //             foreignKey: 'user_id',
-    //             targetKey: 'user_id',
-    //             onDelete: 'CASCADE',
-    //         });
-    //         this.hasMany(models.Utms, {
-    //             foreignKey: 'user_utm_source_id',
-    //             sourceKey: 'user_utm_source_id',
-    //         });
-    //     }
-    // }
-    //
-    // User_utm_sources.init(
-    //     {
-    //         user_utm_source_id: {
-    //             allowNull: false,
-    //             autoIncrement: true,
-    //             primaryKey: true,
-    //             type: DataTypes.INTEGER,
-    //         },
-    //         source_name: {
-    //             type: DataTypes.STRING,
-    //             allowNull: false,
-    //         },
-    //     },
-    //     {
-    //         sequelize,
-    //         modelName: 'User_utm_sources',
-    //         tableName: 'User_utm_sources',
-    //     }
-    // );
 
     return User_utm_sources;
 };
 
-module.exports = User_utm_sources;
+export default User_utm_sources;
