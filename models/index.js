@@ -11,7 +11,16 @@ const env = process.env.NODE_ENV || 'development';
 import config from '../config/config.js';
 const db = {};
 
-const sequelize = new Sequelize(config[env].database, config[env].username, config[env].password, config[env]);
+const sequelize = new Sequelize(config[env].database, config[env].username, config[env].password, {
+    host: config[env].host,
+    dialect: config[env].dialect,
+    timezone: 'Asia/Seoul',
+    dialectOptions: {
+        charset: 'utf8mb4',
+        dateStrings: true,
+        typeCast: true,
+    },
+});
 
 db.Utms = Utms(sequelize, Sequelize);
 db.Users = Users(sequelize, Sequelize);
