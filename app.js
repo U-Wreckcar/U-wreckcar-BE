@@ -9,6 +9,7 @@ import { Strategy as KakaoStrategy } from 'passport-kakao';
 import { router as UserRouter } from './src/routes/userRouter.js';
 import { router as UTMRouter } from './src/routes/utmRouter.js';
 // import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
+import db from './models/index.js';
 
 const app = express();
 
@@ -17,8 +18,17 @@ if (process.env.NODE_ENV === 'production') {
 } else {
     app.use(morgan('dev'));
 }
-
 console.log(process.env.NODE_ENV);
+
+db.sequelize
+    .sync({ force: false })
+    .then(() => {
+        console.log('MySQL connected.');
+    })
+    .catch((err) => {
+        console.error(err);
+    });
+
 app.use(express.json());
 app.use(cookieParser());
 

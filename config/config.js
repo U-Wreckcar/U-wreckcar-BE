@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 
-// .env 파일에서 환경 변수를 읽어들입니다.
 dotenv.config();
 
 const config = {

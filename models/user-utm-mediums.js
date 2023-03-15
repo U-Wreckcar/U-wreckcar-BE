@@ -1,13 +1,9 @@
 'use strict';
-import { Model } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 
-export default (sequelize, DataTypes) => {
-    class UserUtmMedium extends Model {
-        static associate(models) {
-            this.belongsTo(models.Users, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-        }
-    }
-    UserUtmMedium.init(
+const User_utm_mediums = (sequelize, DataTypes) => {
+    const User_utm_mediums = sequelize.define(
+        "User_utm_mediums",
         {
             user_utm_medium_id: {
                 allowNull: false,
@@ -30,8 +26,26 @@ export default (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            modelName: 'User-utm-mediums',
+            modelName: 'User_utm_mediums',
+            tableName: 'User_utm_mediums',
+            createdAt : "created_at",
+            updatedAt : "updated_at",
+            timestamps: true,
         }
-    );
-    return UserUtmMedium;
+    )
+    User_utm_mediums.associate = (db) => {
+        db.User_utm_mediums.belongsTo(db.Users, {
+            foreignKey: 'user_id',
+            targetKey: 'user_id',
+            onDelete: 'CASCADE',
+        });
+        db.User_utm_mediums.hasMany(db.Utms, {
+            foreignKey: 'user_utm_medium_id',
+            sourceKey: 'user_utm_medium_id',
+        });
+    }
+
+    return User_utm_mediums;
 };
+
+export default User_utm_mediums;
