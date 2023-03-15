@@ -10,7 +10,6 @@
 //   database: 'kshexportdb',
 // };
 
-
 // const FILE_PATH = `/Users/User/성현pdf`;
 
 // async function exportDataToPDF() {
@@ -18,7 +17,7 @@
 
 //     // 원하는 데이터대로 쿼리사용후 데이터 조회
 //     const myData = await DB_CONFIG.query('SELECT * FROM member')
-    
+
 //     // pdf 파일 생성
 //     const doc = new PDFDocument();
 
@@ -26,13 +25,10 @@
 //     myData.forEach((row) => {
 //       doc.text(`${row.id}: ${row.name}`);
 //     });
-    
-    
+
 //     // 해당경로에 doc 파일 (pdf) 를 저장 할것이다.
 //     doc.pipe(fs.createWriteStream(FILE_PATH));
 //     doc.end();
-
-
 
 //   } catch {
 //     console.error(error);
@@ -41,10 +37,3 @@
 // }
 
 // module.exports = exportDataToPDF;
-
-
-
-
-
-
-

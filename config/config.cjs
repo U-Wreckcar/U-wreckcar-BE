@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 
 // .env 파일에서 환경 변수를 읽어들입니다.
 dotenv.config();
@@ -27,4 +27,4 @@ const config = {
     },
 };
 
-export default config;
+module.exports = config;
