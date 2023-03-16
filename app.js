@@ -69,18 +69,6 @@ passport.use(kakaoStrategy);
 // Router
 app.use(UserRouter);
 app.use(UTMRouter);
-app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error destroying session.');
-        }
-
-        // 쿠키를 삭제하려면 클라이언트에서 해당 쿠키의 만료 날짜를 과거로 설정해야 합니다.
-        res.clearCookie('connect.sid');
-        res.redirect('/');
-    });
-});
 
 app.use('error', (err, req, res) => {
     console.log(err);
