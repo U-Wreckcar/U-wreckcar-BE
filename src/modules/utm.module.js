@@ -50,13 +50,12 @@ export async function createUtmMediums(user_id, utm_medium) {
 }
 
 // UTM data 생성
-export async function createUtm(inputVal) {
+export async function createUtm(user_id, inputVal) {
     try {
-        const user_utm_source_id = await createUtmSources(inputVal.user_id, inputVal.utm_source);
-        const user_utm_medium_id = await createUtmMediums(inputVal.user_id, inputVal.utm_medium);
+        const user_utm_source_id = await createUtmSources(user_id, inputVal.utm_source);
+        const user_utm_medium_id = await createUtmMediums(user_id, inputVal.utm_medium);
 
         const {
-            user_id,
             utm_url,
             utm_campaign_id,
             utm_campaign_name,
