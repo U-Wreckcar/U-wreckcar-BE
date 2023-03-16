@@ -1,4 +1,4 @@
-import { createUtm, deleteUtm, getAllUtms } from '../../modules/sequelize.js';
+import { createUtm, deleteUtm, getAllUtms } from '../../modules/utm.module.js';
 
 export async function createUtmController(req, res, next) {
     try {

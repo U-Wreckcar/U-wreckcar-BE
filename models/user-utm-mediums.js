@@ -3,7 +3,7 @@ import { Model, DataTypes } from 'sequelize';
 
 const User_utm_mediums = (sequelize, DataTypes) => {
     const User_utm_mediums = sequelize.define(
-        "User_utm_mediums",
+        'User_utm_mediums',
         {
             user_utm_medium_id: {
                 allowNull: false,
@@ -28,11 +28,11 @@ const User_utm_mediums = (sequelize, DataTypes) => {
             sequelize,
             modelName: 'User_utm_mediums',
             tableName: 'User_utm_mediums',
-            createdAt : "created_at",
-            updatedAt : "updated_at",
+            createdAt: 'created_at',
+            updatedAt: 'updated_at',
             timestamps: true,
         }
-    )
+    );
     User_utm_mediums.associate = (db) => {
         db.User_utm_mediums.belongsTo(db.Users, {
             foreignKey: 'user_id',
@@ -42,8 +42,9 @@ const User_utm_mediums = (sequelize, DataTypes) => {
         db.User_utm_mediums.hasMany(db.Utms, {
             foreignKey: 'user_utm_medium_id',
             sourceKey: 'user_utm_medium_id',
+            onDelete: 'CASCADE',
         });
-    }
+    };
 
     return User_utm_mediums;
 };
