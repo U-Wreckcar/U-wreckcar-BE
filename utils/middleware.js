@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {alreadyExists, findUserData} from '../src/modules/user.module.js';
+import { alreadyExists, findUserData } from '../src/modules/user.module.js';
 
 export async function authenticate(req, res, next) {
     const accessToken = req.cookies.access_token;
@@ -24,10 +24,10 @@ export async function authenticate(req, res, next) {
         });
 
         // 사용자 정보를 req.user에 저장
-        console.log(response.data)
+        console.log(response.data);
         const userData = await findUserData(response.data);
-        req.user = userData
-        req.session.user = userData
+        req.user = userData;
+        req.session.user = userData;
         next();
     } catch (error) {
         // 액세스 토큰이 만료되었을 경우
@@ -48,7 +48,7 @@ export async function authenticate(req, res, next) {
                 );
 
                 // 새로 발급받은 액세스 토큰을 쿠키에 저장.
-                res.cookie('access_token', refreshResponse.data.access_token);
+                res.cookie('access_token', refreshResponse.data.access_token, { secure: false });
 
                 // 새로 발급받은 액세스 토큰으로 사용자 정보를 다시 요청.
                 const newResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
@@ -58,8 +58,8 @@ export async function authenticate(req, res, next) {
                 });
 
                 const userData = await findUserData(newResponse.data);
-                req.user = userData
-                req.session.user = userData
+                req.user = userData;
+                req.session.user = userData;
                 next();
             } catch (refreshError) {
                 // refresh 토큰이 만료되었거나, 잘못된 경우
