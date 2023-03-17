@@ -18,7 +18,7 @@ router.get('/auth/kakao/callback', kakaoCallback, async (req, res) => {
     await alreadyExists(user);
     res.cookie('access_token', access_token, { secure: false });
     res.cookie('refresh_token', refresh_token, { secure: false });
-    res.redirect(`${process.env.CLIENT_URL}`);
+    res.redirect(`${process.env.CLIENT_URL}/main`);
 });
 
 // 회원

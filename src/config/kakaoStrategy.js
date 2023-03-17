@@ -21,6 +21,6 @@ export const kakaoLogin = passport.authenticate('kakao', {
     scope: ['profile_nickname', 'profile_image', 'account_email'],
 });
 export const kakaoCallback = passport.authenticate('kakao', {
-    failureRedirect: '/login',
+    failureRedirect: `${process.env.CLIENT_URL}`,
     session: false,
 });
