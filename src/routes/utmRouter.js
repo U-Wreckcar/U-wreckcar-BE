@@ -13,7 +13,7 @@ import { utmMemo } from '../controllers/utm/utmMemo.js';
 const router = express.Router();
 
 // UTM 관련
-router.get('/api/utms/:user_id', asyncWrapper(getAllUtmsController));
+router.get('/api/utms', asyncWrapper(getAllUtmsController));
 router.delete('/api/utms/:utm_id', asyncWrapper(deleteUtmController));
 router.post('/api/utms', asyncWrapper(createUtmController));
 router.post('/api/utms/external', asyncWrapper(getExternalUtmController));

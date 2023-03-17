@@ -48,9 +48,15 @@ const Utms = (sequelize, DataTypes) => {
         }
     );
     Utms.associate = (db) => {
-        db.Utms.belongsTo(db.User_utm_sources, { foreignKey: 'user_utm_source_id' });
-        db.Utms.belongsTo(db.User_utm_mediums, { foreignKey: 'user_utm_medium_id' });
-        db.Utms.belongsTo(db.Users, { foreignKey: 'user_id' });
+        db.Utms.belongsTo(db.User_utm_sources, {
+            foreignKey: 'user_utm_source_id',
+            onDelete: 'CASCADE',
+        });
+        db.Utms.belongsTo(db.User_utm_mediums, {
+            foreignKey: 'user_utm_medium_id',
+            onDelete: 'CASCADE',
+        });
+        db.Utms.belongsTo(db.Users, { foreignKey: 'user_id', onDelete: 'CASCADE' });
     };
     return Utms;
 };

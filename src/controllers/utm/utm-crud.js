@@ -1,7 +1,8 @@
-import { createUtm, deleteUtm, getAllUtms } from '../../modules/sequelize.js';
+import { createUtm, deleteUtm, getAllUtms } from '../../modules/utm.module.js';
 
 export async function createUtmController(req, res, next) {
     try {
+        const { user_id } = req.user;
         const requirements = ['utm_source', 'utm_medium', 'utm_campaign_name', 'utm_url'];
 
         // requirements Validation.
@@ -11,7 +12,7 @@ export async function createUtmController(req, res, next) {
             }
         });
 
-        const result = await createUtm(req.body);
+        const result = await createUtm(user_id, req.body);
         res.status(200).json(result);
     } catch (err) {
         console.error(err);
@@ -38,7 +39,7 @@ export async function deleteUtmController(req, res, next) {
 
 export async function getAllUtmsController(req, res, next) {
     try {
-        const { user_id } = req.params;
+        const { user_id } = req.user;
         const result = await getAllUtms(user_id);
         res.status(200).json(result);
     } catch (err) {
