@@ -27,8 +27,8 @@ const User_utm_sources = (sequelize, DataTypes) => {
             sequelize,
             modelName: 'User_utm_sources',
             tableName: 'User_utm_sources',
-            createdAt : "created_at",
-            updatedAt : "updated_at",
+            createdAt: 'created_at',
+            updatedAt: 'updated_at',
             timestamps: true,
         }
     );
@@ -41,6 +41,7 @@ const User_utm_sources = (sequelize, DataTypes) => {
         db.User_utm_sources.hasMany(db.Utms, {
             foreignKey: 'user_utm_source_id',
             sourceKey: 'user_utm_source_id',
+            onDelete: 'CASCADE',
         });
     };
 
