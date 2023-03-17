@@ -55,12 +55,11 @@ export async function getExternalUtmController(req, res, next) {
     try {
         const { externalUrl, created_at, utm_memo } = req.body;
         let doc = {
+            user_id: req.user.user_id,
             created_at,
             utm_memo,
         };
 
-        // sample
-        doc['user_id'] = 1;
         const [baseUrl, utmResources] = externalUrl.split('?');
         doc['utm_url'] = baseUrl.slice(8);
         const splitResources = utmResources.split('&');

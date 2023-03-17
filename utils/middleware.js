@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { alreadyExists } from '../src/modules/user.module.js';
+import {alreadyExists, findUserData} from '../src/modules/user.module.js';
 
 export async function authenticate(req, res, next) {
     const accessToken = req.cookies.access_token;
@@ -19,13 +19,13 @@ export async function authenticate(req, res, next) {
     try {
         const response = await axios.get('https://kapi.kakao.com/v2/user/me', {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `${accessToken}`,
             },
         });
 
         // 사용자 정보를 req.user에 저장
         console.log(response.data)
-        const userData = await alreadyExists(response.data);
+        const userData = await findUserData(response.data);
         req.user = userData
         req.session.user = userData
         next();
@@ -57,7 +57,7 @@ export async function authenticate(req, res, next) {
                     },
                 });
 
-                const userData = await alreadyExists(newResponse.data);
+                const userData = await findUserData(newResponse.data);
                 req.user = userData
                 req.session.user = userData
                 next();
