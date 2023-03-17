@@ -26,3 +26,4 @@ router.get('/api/user/profile', authenticate, asyncWrapper(getUserProfile));
 router.post('/api/user/profile', () => {});
 
 export { router };
+
