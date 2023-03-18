@@ -76,7 +76,9 @@ export async function createUtm(user_id, inputVal) {
         }
 
         const shorten_url = await Shortener.Shorten(full_url);
-
+        if (!shorten_url) {
+            throw new Error(`Couldn't make shortenUrl from ${full_url}`);
+        }
         const utmData = await db.Utms.create({
             utm_url,
             utm_campaign_id,
