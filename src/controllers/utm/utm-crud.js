@@ -4,6 +4,7 @@ export async function createUtmController(req, res, next) {
     try {
         const { user_id } = req.user;
         const requirements = ['utm_source', 'utm_medium', 'utm_campaign_name', 'utm_url'];
+        const utmsData = req.body.utms;
 
         // requirements Validation.
         Object.keys(req.body).forEach((key) => {
@@ -12,7 +13,15 @@ export async function createUtmController(req, res, next) {
             }
         });
 
-        const result = await createUtm(user_id, req.body);
+        const result = utmsData.map(async (doc) => {
+            const result = await createUtm(user_id, doc);
+            return {
+                utm_id: result.utm_id,
+                full_url: result.full_url,
+                shorten_url: result.shorten_url
+            }
+        })
+
         res.status(200).json(result);
     } catch (err) {
         console.error(err);

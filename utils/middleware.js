@@ -2,8 +2,8 @@ import axios from 'axios';
 import { findUserData } from '../src/modules/user.module.js';
 
 export async function authenticate(req, res, next) {
-    const accessToken = req.cookies.access_token;
-    const refreshToken = req.cookies.refresh_token;
+    const accessToken = req.headers.authorization;
+    const refreshToken = req.headers['x-refresh-token'];
 
     if (!accessToken) {
         return res.status(401).json({ message: 'Unauthorized' });

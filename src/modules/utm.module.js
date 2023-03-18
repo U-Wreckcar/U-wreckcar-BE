@@ -91,7 +91,8 @@ export async function createUtm(user_id, inputVal) {
             shorten_url,
             created_at,
         });
-        return utmData;
+
+        return utmData.toJSON();
     } catch (err) {
         console.error(err);
         return err;
