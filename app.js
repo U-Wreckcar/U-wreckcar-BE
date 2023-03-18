@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
+import helmet from 'helmet';
 import { kakaoStrategy } from './src/config/kakaoStrategy.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -12,6 +13,7 @@ import { router as UTMRouter } from './src/routes/utmRouter.js';
 import db from './models/index.js';
 
 const app = express();
+app.use(helmet());
 
 // 서버 실행 환경 & 로그 레벨 설정
 if (process.env.NODE_ENV === 'production') {

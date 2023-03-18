@@ -30,6 +30,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE(6),
       }
+    }, {
+      initialAutoIncrement: 1
     });
   },
   down: async (queryInterface, Sequelize) => {

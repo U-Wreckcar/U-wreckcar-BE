@@ -26,10 +26,15 @@ export async function alreadyExists(userData) {
 }
 
 export async function findUserData(userData) {
-    const checkUser = await db.Users.findOne({
-        where: {
-            email: userData.kakao_account.email,
-        },
-    });
-    return checkUser ? checkUser.dataValues : false;
+    try {
+        const checkUser = await db.Users.findOne({
+            where: {
+                email: userData.kakao_account.email,
+            },
+        });
+        return checkUser ? checkUser.dataValues : false;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
 }
