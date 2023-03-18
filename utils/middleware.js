@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { alreadyExists, findUserData } from '../src/modules/user.module.js';
+import { findUserData } from '../src/modules/user.module.js';
 
 export async function authenticate(req, res, next) {
     const accessToken = req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
-    console.log(accessToken, refreshToken);
 
     if (!accessToken) {
         return res.status(401).json({ message: 'Unauthorized' });
@@ -24,7 +23,6 @@ export async function authenticate(req, res, next) {
         });
 
         // 사용자 정보를 req.user에 저장
-        console.log(response.data);
         const userData = await findUserData(response.data);
         req.user = userData;
         req.session.user = userData;

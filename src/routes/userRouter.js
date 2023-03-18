@@ -10,15 +10,20 @@ const router = express.Router();
 // kakao 로그인
 router.get('/auth/kakao', kakaoLogin);
 router.get('/auth/kakao/callback', kakaoCallback, async (req, res) => {
-    const { access_token, refresh_token, user } = req.user;
-    console.log('AccessToken : ', access_token);
-    console.log('RefreshToken : ', refresh_token);
+    try {
+        const { access_token, refresh_token, user } = req.user;
+        console.log('AccessToken : ', access_token);
+        console.log('RefreshToken : ', refresh_token);
 
-    // 기존 회원 확인 후 새로 가입.
-    await alreadyExists(user);
-    res.cookie('access_token', access_token, { secure: false });
-    res.cookie('refresh_token', refresh_token, { secure: false });
-    res.redirect(`${process.env.CLIENT_URL}/main`);
+        // 기존 회원 확인 후 새로 가입.
+        await alreadyExists(user);
+        res.cookie('access_token', access_token, { sameSite: 'none', secure: true });
+        res.cookie('refresh_token', refresh_token, { sameSite: 'none', secure: true });
+        res.status(201);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ errorMessage: err.message, stack: err.stack });
+    }
 });
 
 // 회원
