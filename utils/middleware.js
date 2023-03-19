@@ -24,6 +24,9 @@ export async function authenticate(req, res, next) {
 
         // 사용자 정보를 req.user에 저장
         const userData = await findUserData(response.data);
+        if (!userData) {
+            res.redirect(`${process.env.CLIENT_URL}/login`);
+        }
         req.user = userData;
         req.session.user = userData;
         next();
@@ -56,6 +59,9 @@ export async function authenticate(req, res, next) {
                 });
 
                 const userData = await findUserData(newResponse.data);
+                if (!userData) {
+                    res.redirect(`${process.env.CLIENT_URL}/login`);
+                }
                 req.user = userData;
                 req.session.user = userData;
                 next();
