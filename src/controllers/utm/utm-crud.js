@@ -13,16 +13,31 @@ export async function createUtmController(req, res, next) {
             }
         });
 
-        const result = utmsData.map(async (doc) => {
-            const result = await createUtm(user_id, doc);
-            return {
-                utm_id: result.utm_id,
-                full_url: result.full_url,
-                shorten_url: result.shorten_url
+        const result = await Promise.all(utmsData.map(async (doc) => {
+            try {
+                const result = await createUtm(user_id, doc);
+                return {
+                    utm_id: result.utm_id,
+                    full_url: result.full_url,
+                    shorten_url: result.shorten_url
+                };
+            } catch (err) {
+                console.error(err);
+                return {
+                    error: true,
+                    message: err.message,
+                    stack: err.stack,
+                };
             }
-        })
+        }));
 
-        res.status(200).json(result);
+        const hasError = result.some((item) => item.error);
+
+        if (hasError) {
+            res.status(500).json(result);
+        } else {
+            res.status(200).json(result);
+        }
     } catch (err) {
         console.error(err);
         res.status(500).json({
@@ -31,6 +46,7 @@ export async function createUtmController(req, res, next) {
         });
     }
 }
+
 
 export async function deleteUtmController(req, res, next) {
     try {
