@@ -9,20 +9,20 @@ async function utmMemo(req, res) {
     // };
     console.log(inputMemo);
 
-    const utm_id = inputMemo['id'];
-    const utm_memo = inputMemo['memo'];
+    const utm_id = inputMemo['utm_id'];
+    const utm_memo = inputMemo['utm_memo'];
     const DB_CONFIG = config.test_db_config;
 
-    const sql_query = `UPDATE kshexportdb.utmtest_2 SET memo = '${utm_memo}' where id=${utm_id} ; `;
+    const sql_query = `UPDATE uwreckcar_db.Utms SET utm_memo = '${utm_memo}' where utm_id=${utm_id} ; `;
     // db 연결
     const connection = await createConnection(DB_CONFIG);
 
     await connection.execute(sql_query);
 
-    return res.status(200).json({
+return res.status(200).json({
         isSuccess: true,
         msg: '메모 수정이 완료되었습니다',
-        update_utm_id: inputMemo['id'],
+        update_utm_id: inputMemo['utm_id'],
     });
 }
 
