@@ -91,7 +91,7 @@ export async function createUtm(user_id, inputVal) {
             user_id,
             full_url,
             shorten_url,
-            created_at,
+            created_at : new Date(created_at),
         });
 
         return utmData.toJSON();
