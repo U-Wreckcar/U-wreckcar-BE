@@ -114,7 +114,18 @@ export async function deleteUtm(utm_id) {
 // UTM 전체 조회
 export async function getAllUtms(user_id) {
     try {
-        const result = await db.Utms.findAll({ where: { user_id } });
+        let result = await db.Utms.findAll({ where: { user_id } });
+        const updatate_result = []; // 시간,분,초 를뺀 값을 할당할 배열
+        Object.keys(result).forEach((index) => {
+            const change_updata_at = result[index].created_at.split(' ')[0]     // 스플릿으로 나눠서 년,월,일 값만 따로 저장
+            updatate_result.push(change_updata_at)
+            result.forEach(utm_array => {
+                utm_array['created_at'] = updatate_result[index];   // TODO: 일반 반목문에서는 잘되는데 이상하게 프로젝트 파일에서는 적용이 안되는 파트
+            });
+        });
+        console.log('변경될 result 값 확인',result[0]['created_at']);
+        console.log('변경될 result 값 확인',result[1]['created_at']);
+        console.log('변경될 result 값 확인',result[2]['created_at']);
         return result;
     } catch (err) {
         console.error(err);
