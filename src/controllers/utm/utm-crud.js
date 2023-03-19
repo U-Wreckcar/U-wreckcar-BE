@@ -1,4 +1,6 @@
 import { createUtm, deleteUtm, getAllUtms } from '../../modules/utm.module.js';
+import { createConnection } from 'mysql2/promise.js';
+import config from '../../config/dbconfig.js';
 
 export async function createUtmController(req, res, next) {
     try {
@@ -25,9 +27,32 @@ export async function createUtmController(req, res, next) {
 
 export async function deleteUtmController(req, res, next) {
     try {
-        const { utm_id } = req.params;
-        const result = await deleteUtm(utm_id);
-        res.status(result.status).json(result);
+        // const { utm_id } = req.params;
+        const input = req.body['data'] // req 값으로 나오는 배열과 객체값
+        const utm_id_arr = [];
+        input.forEach(element => {
+            utm_id_arr.push(element['utm_id']);   // input 에서 utm_id 만 추출해서 따로 저장
+        });
+
+        let sql_id_add = 'WHERE ';
+        let id_stack = 1;
+        utm_id_arr.forEach((id) => {
+            id_stack--;
+            if (id_stack < 0) {
+                sql_id_add = sql_id_add + 'or ';
+            }
+            sql_id_add = sql_id_add + `utm_id = ${id} `;
+        });
+
+        const sql_query = `DELETE FROM uwreckcar_db.Utms ${sql_id_add}`;
+        const DB_CONFIG = config.test_db_config;
+        const connection = await createConnection(DB_CONFIG);
+        await connection.execute(sql_query);
+
+        res.json({
+            msg: "utm_id 삭제성공",
+        })
+        // res.status(result.status).json(result);
     } catch (err) {
         console.error(err);
         res.status(500).json({
@@ -76,5 +101,5 @@ export async function getExternalUtmController(req, res, next) {
 
         const result = await createUtm(doc);
         res.status(200).json(result);
-    } catch (err) {}
+    } catch (err) { }
 }
