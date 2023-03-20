@@ -118,9 +118,9 @@ export async function deleteUtmController(req, res, next) {
 export async function getAllUtmsController(req, res, next) {
     try {
         const { user_id } = req.user;
-        const dateFixResult = await getAllUtms(user_id);
+        let dateFixResult = await getAllUtms(user_id);
         const result = dateFixResult.map((doc) => {
-            doc.created_at = new Date(doc.created_at).toISOString().slice(0, 10);
+            doc.created_at_filter = new Date(doc.created_at).toISOString().slice(0, 10);
             return doc;
         })
         res.status(200).json(result);
