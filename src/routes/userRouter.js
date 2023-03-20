@@ -25,7 +25,7 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 });
 
 // 회원
-router.get('/api/user/profile', authenticate, asyncWrapper(getUserProfile));
-router.post('/api/user/profile', () => {});
+router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
+router.post('/api/users/profile', () => {});
 
 export { router };
