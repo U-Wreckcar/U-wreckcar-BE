@@ -18,7 +18,7 @@ const router = express.Router();
 router.post('/api/utms/export/excell', asyncWrapper(exportDataToExcel));
 router.post('/api/utms/export/sheet', asyncWrapper(exportDataToCsv));
 router.post('/api/utms/filter', asyncWrapper(utmFilters));
-router.patch('/api/utms/memo', authenticate, asyncWrapper(utmMemo));
+router.patch('/api/utms/memo', asyncWrapper(utmMemo));
 router.post('/api/utms/export/filedown', asyncWrapper(file_download));
 // UTM 관련
 router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
