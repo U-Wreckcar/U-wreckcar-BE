@@ -35,7 +35,6 @@ const Utms = (sequelize, DataTypes) => {
             },
             shorten_url: {
                 type: DataTypes.STRING,
-                allowNull: false,
             },
         },
         {

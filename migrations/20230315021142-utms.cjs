@@ -36,7 +36,6 @@ module.exports = {
       },
       shorten_url: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
       user_utm_source_id: {
         allowNull: false,
