@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { alreadyExists } from '../src/modules/user.module.js';
+import { findUserData } from '../src/modules/user.module.js';
 
 export async function authenticate(req, res, next) {
-    const accessToken = req.cookies.access_token;
-    const refreshToken = req.cookies.refresh_token;
-    console.log(accessToken, refreshToken);
+    const accessToken = req.headers.authorization;
+    const refreshToken = req.headers['x-refresh-token'];
 
     if (!accessToken) {
         return res.status(401).json({ message: 'Unauthorized' });
@@ -19,15 +18,17 @@ export async function authenticate(req, res, next) {
     try {
         const response = await axios.get('https://kapi.kakao.com/v2/user/me', {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `${accessToken}`,
             },
         });
 
         // 사용자 정보를 req.user에 저장
-        console.log(response.data)
-        const userData = await alreadyExists(response.data);
-        req.user = userData
-        req.session.user = userData
+        const userData = await findUserData(response.data);
+        if (!userData) {
+            res.redirect(`${process.env.CLIENT_URL}/login`);
+        }
+        req.user = userData;
+        req.session.user = userData;
         next();
     } catch (error) {
         // 액세스 토큰이 만료되었을 경우
@@ -48,7 +49,7 @@ export async function authenticate(req, res, next) {
                 );
 
                 // 새로 발급받은 액세스 토큰을 쿠키에 저장.
-                res.cookie('access_token', refreshResponse.data.access_token);
+                res.cookie('access_token', refreshResponse.data.access_token, { secure: false });
 
                 // 새로 발급받은 액세스 토큰으로 사용자 정보를 다시 요청.
                 const newResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
@@ -57,9 +58,12 @@ export async function authenticate(req, res, next) {
                     },
                 });
 
-                const userData = await alreadyExists(newResponse.data);
-                req.user = userData
-                req.session.user = userData
+                const userData = await findUserData(newResponse.data);
+                if (!userData) {
+                    res.redirect(`${process.env.CLIENT_URL}/login`);
+                }
+                req.user = userData;
+                req.session.user = userData;
                 next();
             } catch (refreshError) {
                 // refresh 토큰이 만료되었거나, 잘못된 경우

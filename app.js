@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
+import helmet from 'helmet';
 import { kakaoStrategy } from './src/config/kakaoStrategy.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -9,12 +10,10 @@ import morgan from 'morgan';
 import { router as UserRouter } from './src/routes/userRouter.js';
 import { router as UTMRouter } from './src/routes/utmRouter.js';
 // import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
-import http from 'http'
-import https from 'https'
-import fs from 'fs'
 import db from './models/index.js';
 
 const app = express();
+app.use(helmet());
 
 // 서버 실행 환경 & 로그 레벨 설정
 if (process.env.NODE_ENV === 'production') {
@@ -41,7 +40,7 @@ app.use(cookieParser());
 app.use(function (req, res, next) {
     res.set({
         'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': `${process.env.CLIENT_URL}`,
         'Access-Control-Allow-Methods': '*',
         'Access-Control-Allow-Headers':
             'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization, refreshToken, cache-control',
@@ -52,7 +51,8 @@ app.use(function (req, res, next) {
 // CORS
 app.use(
     cors({
-        origin: '*',
+        origin: `${process.env.CLIENT_URL}`,
+        credentials: true,
     })
 );
 
@@ -80,29 +80,6 @@ app.use('error', (err, req, res) => {
     });
 });
 
-const isProduction = process.env.NODE_ENV === 'production';
-
-if (isProduction) {
-    // 프로덕션 환경인 경우 HTTPS 서버 생성
-    const privateKey = fs.readFileSync('/etc/letsencrypt/live/uwreckcar-api.site/privkey.pem', 'utf8');
-    const certificate = fs.readFileSync('/etc/letsencrypt/live/uwreckcar-api.site/cert.pem', 'utf8');
-    const ca = fs.readFileSync('/etc/letsencrypt/live/uwreckcar-api.site/chain.pem', 'utf8');
-
-    const credentials = {
-        key: privateKey,
-        cert: certificate,
-        ca: ca
-    };
-
-    const httpsServer = https.createServer(credentials, app);
-    httpsServer.listen(process.env.SERVER_PORT, () => {
-        console.log(`HTTPS server is running on port ${process.env.SERVER_PORT}`);
-    });
-
-} else {
-    // 개발 환경인 경우 HTTP 서버 생성
-    const httpServer = http.createServer(app);
-    httpServer.listen(process.env.SERVER_PORT, () => {
-        console.log(`HTTP server is running on port ${process.env.SERVER_PORT}`);
-    });
-}
+app.listen(process.env.SERVER_PORT, () => {
+    `Server is listening on ${process.env.SERVER}`;
+});

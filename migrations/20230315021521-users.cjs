@@ -7,6 +7,7 @@ module.exports = {
       user_id: {
         allowNull: false,
         primaryKey: true,
+        autoIncrement: true,
         type: Sequelize.INTEGER
       },
       username: {
@@ -29,6 +30,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE(6),
       }
+    }, {
+      initialAutoIncrement: 1
     });
   },
   down: async (queryInterface, Sequelize) => {
