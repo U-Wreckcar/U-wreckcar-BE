@@ -154,7 +154,7 @@ export async function getExternalUtmController(req, res, next) {
             utm_memo : memo,
         };
 
-        const [baseUrl, utmResources] = externalUrl.split('?');
+        const [baseUrl, utmResources] = utm_url.split('?');
         doc['utm_url'] = baseUrl.slice(8);
         const splitResources = utmResources.split('&');
 
