@@ -10,7 +10,6 @@ import {
 } from '../controllers/utm/utm-crud.js';
 import { utmFilters } from '../controllers/utm/utmFilter.js';
 import { utmMemo } from '../controllers/utm/utmMemo.js';
-import { exportDataToCsv } from '../controllers/utm/exportDataToCsv.js';
 import { file_download } from '../controllers/utm/fileDownload.js';
 
 const router = express.Router();
