@@ -147,11 +147,11 @@ export async function getAllUtmsController(req, res, next) {
 
 export async function getExternalUtmController(req, res, next) {
     try {
-        const { externalUrl, created_at, utm_memo } = req.body;
+        const { utm_url, created_at, memo } = req.body;
         let doc = {
             user_id: req.user.user_id,
             created_at,
-            utm_memo,
+            utm_memo : memo,
         };
 
         const [baseUrl, utmResources] = externalUrl.split('?');
