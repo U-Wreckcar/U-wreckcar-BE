@@ -1,3 +1,3 @@
-소스ID,미디움ID,url,캠페인 ID,캠페인 이름,캠페인 텀,캠페인 컨텐츠,메모
-sdfs,test,www.anver.com,test,test,test,test,test
-sdfs,test,wwwnaver.com,www,sadf,asdfsad,sdafasf,sdafasd
+URL,캠페인ID,소스,미디움,캠페인이름,캠페인텀,콘텐츠,UTM,Shorten_URL,메모
+www.naver.com,aaa,fefef,tastekim1,ccc,,,https://www.naver.com?utm_source=cccc&utm_medium=dddd&utm_campaign=ccc,https://cutt.ly/l4kApPk,
+naver.com,navervbs,fefef,tastekim1,aaaaaaaa,blo,fdfd,https://naver.com?utm_source=ksh&utm_medium=fdfdf&utm_campaign=aaaaaaaa&utm_term=blo,https://cutt.ly/94kLNKL,2번째 메모

@@ -1,7 +1,7 @@
 import { createConnection } from 'mysql2/promise';
 import { utils, writeFile } from 'xlsx';
 import config from '../../config/dbconfig.js';
-import { utmFilters } from './utmFilter.js';
+// import { utmFilters } from './utmFilter.js';
 
 async function exportDataToExcel(req) {
     const utm_id_arr = req;
