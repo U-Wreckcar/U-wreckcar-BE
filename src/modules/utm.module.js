@@ -67,6 +67,9 @@ export async function createUtm(user_id, inputVal) {
             created_at
         } = inputVal;
 
+        // crated_at 에 입력한 날짜가 없으면 오늘 날짜로 YYYY-MM-DD 로 변환
+        const dateOnly = new Date(created_at || Date.now()).toISOString().slice(0, 10);
+
         let full_url = `https://${utm_url}?utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign_name}`;
 
         if (utm_term) {
@@ -91,7 +94,7 @@ export async function createUtm(user_id, inputVal) {
             user_id,
             full_url,
             shorten_url,
-            created_at : new Date(created_at),
+            created_at : dateOnly,
         });
 
         return utmData.toJSON();
@@ -106,8 +109,8 @@ export async function deleteUtm(utm_id) {
     try {
         const result = await db.Utms.destroy({ where: { utm_id } });
         return result
-            ? { status: 200, success: true, message: 'delete success.' }
-            : { status: 404, success: false, message: 'invalid utm_id.' };
+            ? { success: true}
+            : { success: false, message: 'invalid utm_id.' };
     } catch (err) {
         console.error(err);
         return err;
