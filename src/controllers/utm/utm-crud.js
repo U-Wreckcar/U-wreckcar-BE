@@ -149,7 +149,6 @@ export async function getExternalUtmController(req, res, next) {
     try {
         const { utm_url, created_at, memo } = req.body;
         let doc = {
-            user_id: req.user.user_id,
             created_at,
             utm_memo : memo,
         };
@@ -161,13 +160,14 @@ export async function getExternalUtmController(req, res, next) {
         splitResources.forEach((data) => {
             const [utmType, utmValue] = data.split('=');
             if (utmType == 'utm_campaign') {
-                doc['utm_campaign_name'] = utmValue;
+                doc['utm_campaign_name'] += utmValue;
             } else if (utmType.includes('utm')) {
-                doc[utmType] = utmValue;
+                doc[utmType] += utmValue;
             }
         });
+        console.log(doc)
 
-        const result = await createUtm(doc);
+        const result = await createUtm(req.user.user_id, doc);
         res.status(200).json(result);
     } catch (err) {
         console.error(err);
