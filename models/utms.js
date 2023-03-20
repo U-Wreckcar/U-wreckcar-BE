@@ -18,7 +18,6 @@ const Utms = (sequelize, DataTypes) => {
             },
             utm_campaign_name: {
                 type: DataTypes.STRING,
-                allowNull: false,
             },
             utm_content: {
                 type: DataTypes.STRING,
