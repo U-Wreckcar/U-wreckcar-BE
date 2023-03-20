@@ -120,8 +120,20 @@ export async function getAllUtmsController(req, res, next) {
         const { user_id } = req.user;
         let dateFixResult = await getAllUtms(user_id);
         const result = dateFixResult.map((doc) => {
-            doc.created_at_filter = new Date(doc.created_at).toISOString().slice(0, 10);
-            return doc;
+            return {
+                utm_id : doc.utm_id,
+                utm_url : doc.utm_url,
+                utm_campaign_id : doc.utm_campaign_id,
+                utm_campaign_name : doc.utm_campaign_name,
+                utm_content : doc.utm_content,
+                utm_term : doc.utm_term,
+                utm_memo : doc.utm_memo,
+                full_url : doc.full_url,
+                shorten_url : doc.shorten_url,
+                utm_medium_name : doc.utm_medium_name.medium_name,
+                utm_source_name : doc.utm_source_name.source_name,
+                created_at_filter : new Date(doc.created_at).toISOString().slice(0, 10),
+            };
         })
         res.status(200).json(result);
     } catch (err) {
