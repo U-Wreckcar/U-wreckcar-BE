@@ -40,7 +40,7 @@ app.use(cookieParser());
 app.use(function (req, res, next) {
     res.set({
         'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Origin': 'https://u-wreckcar-fe-phi.vercel.app',
+        'Access-Control-Allow-Origin': `${process.env.CLIENT_URL}`,
         'Access-Control-Allow-Methods': '*',
         'Access-Control-Allow-Headers':
             'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization, refreshToken, cache-control',
@@ -51,7 +51,7 @@ app.use(function (req, res, next) {
 // CORS
 app.use(
     cors({
-        origin: 'https://u-wreckcar-fe-phi.vercel.app',
+        origin: `${process.env.CLIENT_URL}`,
         credentials: true,
     })
 );
