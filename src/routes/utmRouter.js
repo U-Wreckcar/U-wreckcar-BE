@@ -1,6 +1,7 @@
 import express from 'express';
 import { asyncWrapper, authenticate } from '../../utils/middleware.js';
 import { exportDataToExcel } from '../controllers/utm/exportDataToExcel.js';
+import { exportDataToCsv } from '../controllers/utm/exportDataToCsv.js';
 import {
     createUtmController,
     deleteUtmController,

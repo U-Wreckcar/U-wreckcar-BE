@@ -1,4 +1,6 @@
-import { createUtm, deleteUtm, getAllUtms } from '../../modules/utm.module.js';
+import { createUtm, getAllUtms } from '../../modules/utm.module.js';
+import { createConnection } from 'mysql2/promise.js';
+import config from '../../config/dbconfig.js';
 
 export async function createUtmController(req, res, next) {
     try {
