@@ -10,114 +10,81 @@ import { file_download } from './fileDownload.js';
 const fsPromises = fs.promises;
 
 async function exportDataToCsv(req, res) {
-    const db = config.test_db_config;
-    const connection = await createConnection(db);
+    const data = req.body;
 
-    // const utm_id_arr = req['data']; post로 할때는 이게 맞음
-    const utm_id_arr = ['1', '2'];
+    // const data = [
+    //     {
+    //         utm_id: 13,
+    //         utm_url: 'naver.com/',
+    //         utm_campaign_id: 'blog',
+    //         utm_campaign_name: 'blogproject',
+    //     },
+    //     { utm_id: 16, utm_url: 'daum.com', utm_campaign_id: 'dfdfsd', utm_campaign_name: 'fsdsf' },
+    // ];
+    const utm_id_arr = [];
+    data.forEach((index) => {
+        const utm_id = index['utm_id'];
+        utm_id_arr.push(utm_id);
+    });
+    console.log(utm_id_arr);
 
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const date = today.getDate();
-    // const hours = today.getHours();
-    // const minutes = today.getMinutes();
-    const seconds = today.getSeconds();
-    const num = today.getTime();
-    console.log(num);
-    const nowTime = year + '-' + month + '-' + date + '-' + seconds;
-    /*
-        function deleteAllFilesInFolder(folderPath) {
-            fs.readdir(folderPath, (err, files) => {
-                if (err) throw err;
-    
-                for (const file of files) {
-                    fs.unlink(path.join(folderPath, file), (err) => {
-                        if (err) throw err;
-                    });
-                }
-            });
-        }
-    
-        const deletepath = '/path/to/file.txt';
-    
-        if (fs.existsSync(deletepath)) {
-            console.log(`파일이 있는 경로는 : ${deletepath}`);
+    console.log(data[0]);
+    //파일 삭제 로직 생성
+    function deleteAllFilesInFolder(folderPath) {
+        fs.readdir(folderPath, (err, files) => {
+            if (err) throw err;
+            for (const file of files) {
+                fs.unlink(path.join(folderPath, file), (err) => {
+                    if (err) throw err;
+                });
+            }
+        });
+
+        // 해당경로에 파일이 있다면 전부 삭제
+        const delete_path = 'src\\controllers\\utm\\export\\UTM_Data_File_CSV.csv';
+        if (fs.existsSync(delete_path)) {
+            console.log(`파일이 있는 경로는 : ${delete_path}`);
             deleteAllFilesInFolder('src\\controllers\\utm\\export');
         } else {
-            console.log(`경로상에 파일이 없습니다 : ${deletepath}`);
+            console.log(`경로상에 파일이 없습니다 : ${delete_path}`);
         }
-    */
-    // deleteAllFilesInFolder('src\\controllers\\utm\\export');
-
-    const filename = 'UTM_Data_File_CSV.csv';
-    // const filepath = `src\\controllers\\utm\\export\\` + `${filename}`;
-    const filepath = `src\\controllers\\utm\\export\\${filename}`;
+    }
+    // console.log('sql_id_add 에 뭐가 들어가는지 확인해보자');
     let sql_id_add = 'WHERE ';
     let id_stack = 1;
-
-    // for (let i = 0; i < utm_id_arr; i++) {
-    //     id_stack--;
-    //     if (id_stack < 0) {
-    //         sql_id_add = sql_id_add + 'or ';
-    //     }
-    //     const id = utm_id_arr[i];
-    //     sql_id_add = sql_id_add + `utm_ud = '${id}' `;
-    //     // sql_id_add = sql_id_add + 'id = 1';
-    // }
     utm_id_arr.forEach((id) => {
         id_stack--;
         if (id_stack < 0) {
             sql_id_add = sql_id_add + 'or ';
         }
-        sql_id_add = sql_id_add + `utm_id = '${id}' `;
+        sql_id_add = sql_id_add + `utm.utm_id = '${id}' `;
     });
 
-    // utm_id_arr.forEach((utm_id_arr) => {
-    //     id_stack = id_stack - 1;
-    //     if (id_stack < 0) sql_id_add = sql_id_add + 'or ';
-    //     sql_id_add = sql_id_add + `utm_id = ${utm_id_arr[]} `;
-    // });
-    /////////////////////////////////////////////////////////////////////////////
+    // const query = `SELECT source.source_name as '소스ID', medium.medium_name as '미디움ID',utm.utm_url as 'url', utm.utm_campaign_id as '캠페인 ID', utm.utm_campaign_name as '캠페인 이름', utm.utm_term as '캠페인 텀', utm.utm_content as '캠페인 컨텐츠', utm.utm_memo as '메모' FROM uwreckcar_db.Utms as utm inner join User_utm_sources as source inner join User_utm_mediums as medium ${sql_id_add} group by utm.utm_id`;
 
-    const path = 'src\\controllers\\utm\\export\\UTM_Data_File_CSV.csv'; // replace with your folder path
-    // const filename = 'example.txt'; // replace with your file name
+    const query = `SELECT utm.utm_url as URL,utm.utm_campaign_id as 캠페인ID, source.source_name as 소스, medium.medium_name as 미디움, utm_campaign_name as 캠페인이름, utm.utm_term as 캠페인텀, utm.utm_content as 콘텐츠, utm.full_url as UTM, utm.shorten_url Shorten_URL, utm.utm_memo as 메모 FROM uwreckcar_db.Utms as utm inner join User_utm_sources as source inner join User_utm_mediums as medium ${sql_id_add} group by utm.utm_id`;
 
-    console.log('딜리트 로직 시작');
-    fs.access(path + '/' + filename, fs.constants.F_OK, (err) => {
-        if (err) {
-            console.error(`${filename} does not exist in ${path}`);
-            return;
-        }
-
-        fs.readdir(path, (err, files) => {
-            if (err) throw err;
-
-            for (const file of files) {
-                fs.unlink(path + '/' + file, (err) => {
-                    if (err) throw err;
-                    console.log(`deleted ${file}`);
-                });
-            }
-        });
-    });
-    console.log('딜리트 로직 완료')
-    /////////
-
-    const query = `SELECT source.source_name as '소스ID', medium.medium_name as '미디움ID',utm.utm_url as 'url', utm.utm_campaign_id as '캠페인 ID', utm.utm_campaign_name as '캠페인 이름', utm.utm_term as '캠페인 텀', utm.utm_content as '캠페인 컨텐츠', utm.utm_memo as '메모' FROM uwreckcar_db.Utms as utm inner join User_utm_sources as source inner join User_utm_mediums as medium ${sql_id_add} group by utm.utm_id`;
-
+    // db 연결 및 SQL query 문 실행 결과 rows 에 담기
+    const db = config.test_db_config;
+    const connection = await createConnection(db);
     const [rows] = await connection.execute(query);
 
-    const csvStream = csv.format({ headers: true, encoding: 'utf8mb4' });
+    const filename = 'UTM_Data_File_CSV.csv';
+    const filepath = `src\\controllers\\utm\\export\\${filename}`;
 
+    // csv 파일 생성
+    const csvStream = csv.format({ headers: true, encoding: 'utf8mb4' });
     csvStream.pipe(fs.createWriteStream(filepath, { encoding: 'utf8' })).on('finish', () => {
-        console.log('CSV 파일이 잘 완성되었습니다람쥐.');
+        console.log('CSV 파일이 생성완료.');
     });
+
+    // 파일에 쿼리 실행 결과값 담기
     rows.forEach((row) => {
         csvStream.write(row);
     });
+    console.log('csv 파일에 내용 담기 완료');
 
-    // csvStream.end();
+    csvStream.end();
 
     // 추출하기 추가
 
@@ -132,63 +99,38 @@ async function exportDataToCsv(req, res) {
     } else {
         return res.status(400).send('지원하지 않는 파일 포멧 입니다.');
     }
-    // console.log(contentType);
 
-    // await fsPromises.access(filepath, fs.constants.F_OK);
-    console.log('이제 헤더만 뚫으면 된다 제바라ㅏ라라라ㄹㄹㄹㄹㄹㄹ');
+    console.log('헤더 시작', contentType);
     // 사용자의 브라우저가 파일을 다운로드하도록 요청하는 데 필요한 헤더 설정
     res.setHeader('Content-Type', contentType);
     res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
     // console.log('여기까지는 오나?')
 
     const last_path = 'src\\controllers\\utm\\export\\UTM_Data_File_CSV.csv';
-    // const last_path =
-    //     'src\\controllers\\utm\\export\\UTM_Data_File_CSV1679213462400.csv';
-    // const last_path =
-    // 'src\\controllers\\utm\\export\\UTM_Data_File_CSV1679214799647.csv';
-    // const last_path = `src\\controllers\\utm\\export\\`;
-    // const last_path = path.join('src', 'controllers', 'utm', 'export', filename);
 
-    const __dirname = path.dirname(new URL(import.meta.url).pathname);
-    // const last_path = path.join(__dirname, 'controllers', 'utm', 'export', filename);
-    // const last_paht2 = 'src\\controllers\\utm\\export\\' + filename;
+    console.log('파일을 내보내기 위한 스트림 시작');
 
-    // const fileStream = fs.createReadStream(filepath);
-    // const delete_path = `src\\controllers\\utm\\export\\${filename}`;
-    const delete_path = 'src\\controllers\\utm/export\\' + filename;
-    console.log('스트림 패스', delete_path);
-    // const raw_path = String.raw`${stream_path}`;
-    // console.log('여기는 변환이 된 패스', raw_path);
-    // const fileStream = fs.createReadStream(last_path); // 이게 현재까지는 최종 실행파일
+    const stream = fs.createReadStream(last_path, { encoding: 'utf-8', highWaterMark: 64 });
+    stream.on('data', (chunk) => {
+        console.log(`Received ${chunk.length} characters of data.`);
+    });
 
-    // const str = filepath.replace(/'/, /`/);
+    stream.on('end', () => {
+        console.log('Finished reading file.');
+    });
 
-    // const stream_path = 'src\\controllers\\utm\\export\\UTM_Data_File_CSV1679224162610.csv';
-    const fileStream = fs.createReadStream(last_path);
-
-    // const stream = fs.createReadStream(last_path, { encoding: 'utf-8', highWaterMark: 64 });
-
-    // stream.on('data', (chunk) => {
-    //     console.log(`Received ${chunk.length} characters of data.`);
-    // });
-
-    // stream.on('end', () => {
-    //     console.log('Finished reading file.');
-    // });
-
-    // stream.on('error', (err) => {
-    //     console.error(`Error reading file: ${err}`);
-    // });
-
-    // const fileStream = fs.createReadStream(delete_path);
+    stream.on('error', (err) => {
+        console.error(`Error reading file: ${err}`);
+    });
 
     // fileStream.on('error', (err) => {
     //     console.error('파일을 읽으면서 에러가 발생하였습니다 :', err);
     // });
+    console.log('파일을 내보내기 위한 스트림이 잘 마무리됨');
 
     // stream.pipe(res);
-    await fileStream.pipe(res);
+    await stream.pipe(res);
+    console.log('파이프까지 완료');
 }
 
-// pr용 커밋
 export { exportDataToCsv };
