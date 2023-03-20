@@ -19,7 +19,6 @@ module.exports = {
       },
       utm_campaign_name: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
       utm_content: {
         type: Sequelize.STRING,
