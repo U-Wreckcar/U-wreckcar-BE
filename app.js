@@ -73,13 +73,6 @@ passport.use(kakaoStrategy);
 app.use(UserRouter);
 app.use(UTMRouter);
 
-app.use('error', (err, req, res) => {
-    console.log(err);
-    res.status(500).send({
-        message: 'error',
-    });
-});
-
 app.listen(process.env.SERVER_PORT, () => {
     `Server is listening on ${process.env.SERVER}`;
 });

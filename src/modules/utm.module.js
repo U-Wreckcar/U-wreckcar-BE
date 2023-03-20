@@ -64,7 +64,7 @@ export async function createUtm(user_id, inputVal) {
             utm_term,
             utm_content,
             utm_memo,
-            created_at
+            created_at,
         } = inputVal;
 
         // crated_at 에 입력한 날짜가 없으면 오늘 날짜로 YYYY-MM-DD 로 변환
@@ -94,7 +94,7 @@ export async function createUtm(user_id, inputVal) {
             user_id,
             full_url,
             shorten_url,
-            created_at : created_at || Date.now(),
+            created_at: created_at || Date.now(),
         });
 
         return utmData.toJSON();
@@ -108,9 +108,7 @@ export async function createUtm(user_id, inputVal) {
 export async function deleteUtm(utm_id) {
     try {
         const result = await db.Utms.destroy({ where: { utm_id } });
-        return result
-            ? { success: true}
-            : { success: false, message: 'invalid utm_id.' };
+        return result ? { success: true } : { success: false, message: 'invalid utm_id.' };
     } catch (err) {
         console.error(err);
         return err;
@@ -120,7 +118,13 @@ export async function deleteUtm(utm_id) {
 // UTM 전체 조회
 export async function getAllUtms(user_id) {
     try {
-        const result = await db.Utms.findAll({ where: { user_id } });
+        const result = await db.Utms.findAll({
+            where: { user_id },
+            include: [
+                { model: db.User_utm_mediums, as: 'utm_medium_name', attributes: ['medium_name'] },
+                { model: db.User_utm_sources, as: 'utm_source_name', attributes: ['source_name'] },
+            ],
+        });
         return result;
     } catch (err) {
         console.error(err);
