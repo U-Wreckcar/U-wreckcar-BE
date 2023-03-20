@@ -160,12 +160,11 @@ export async function getExternalUtmController(req, res, next) {
         splitResources.forEach((data) => {
             const [utmType, utmValue] = data.split('=');
             if (utmType == 'utm_campaign') {
-                doc['utm_campaign_name'] += utmValue;
+                doc['utm_campaign_name'] = utmValue;
             } else if (utmType.includes('utm')) {
-                doc[utmType] += utmValue;
+                doc[utmType] = utmValue;
             }
         });
-        console.log(doc)
 
         const result = await createUtm(req.user.user_id, doc);
         res.status(200).json(result);
