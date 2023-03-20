@@ -68,7 +68,7 @@ export async function createUtm(user_id, inputVal) {
         } = inputVal;
 
         // crated_at 에 입력한 날짜가 없으면 오늘 날짜로 YYYY-MM-DD 로 변환
-        const dateOnly = new Date(created_at || Date.now()).toISOString().slice(0, 10);
+        // const dateOnly = new Date(created_at || Date.now()).toISOString().slice(0, 10);
 
         let full_url = `https://${utm_url}?utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign_name}`;
 
@@ -94,7 +94,7 @@ export async function createUtm(user_id, inputVal) {
             user_id,
             full_url,
             shorten_url,
-            created_at : dateOnly,
+            created_at : created_at || Date.now(),
         });
 
         return utmData.toJSON();
