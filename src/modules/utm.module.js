@@ -84,16 +84,16 @@ export async function createUtm(user_id, inputVal) {
         // }
         const utmData = await db.Utms.create({
             utm_url,
-            utm_campaign_id,
+            utm_campaign_id : utm_campaign_id || '-',
             utm_campaign_name,
-            utm_content,
-            utm_memo,
-            utm_term,
+            utm_content : utm_content || '-',
+            utm_memo: utm_memo || '-',
+            utm_term : utm_term || '-',
             user_utm_medium_id,
             user_utm_source_id,
             user_id,
             full_url,
-            shorten_url,
+            shorten_url : shorten_url || '-',
             created_at: created_at || Date.now(),
         });
 
