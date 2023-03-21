@@ -36,25 +36,21 @@ db.sequelize
 app.use(express.json());
 app.use(cookieParser());
 
-// headers 설정
-app.use(function (req, res, next) {
-    res.set({
-        'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Origin': `${process.env.CLIENT_URL}`,
-        'Access-Control-Allow-Methods': '*',
-        'Access-Control-Allow-Headers':
-            'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, authorization, refreshToken, cache-control',
-    });
-    next();
-});
-
+const allowedOrigins = [`${process.env.CLIENT_URL}`, `${process.env.CLIENT_LOCAL}`];
 // CORS
 app.use(
     cors({
-        origin: `${process.env.CLIENT_URL}`,
+        origin: (origin, callback) => {
+            if (allowedOrigins.includes(origin) || !origin) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
     })
 );
+
 
 // 세션 설정
 app.use(
@@ -72,6 +68,15 @@ passport.use(kakaoStrategy);
 // Router
 app.use(UserRouter);
 app.use(UTMRouter);
+
+app.use('error', (err, req, res, next) => {
+    console.error('Error : ', err);
+    res.status(500).json({
+        errorName : err.name,
+        errorMessage : err.message,
+        errorStack: err.stack,
+    })
+})
 
 app.listen(process.env.SERVER_PORT, () => {
     `Server is listening on ${process.env.SERVER}`;
