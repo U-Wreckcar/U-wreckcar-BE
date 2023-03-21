@@ -1,5 +1,5 @@
 import db from '../../models/index.js';
-import Shortener from 'link-shortener';
+import * as cuttly from 'cuttly'
 
 // User_utm_source 생성
 export async function createUtmSources(user_id, utm_source) {
@@ -78,10 +78,9 @@ export async function createUtm(user_id, inputVal) {
             full_url += `&utm_content=${utm_content}`;
         }
 
-        const shorten_url = await Shortener.Shorten(full_url);
-        // if (!shorten_url) {
-        //     throw new Error(`Couldn't make shortenUrl from ${full_url}`);
-        // }
+
+        const shorten_url = await cuttly.shortenUrl(process.env.CUTTLY_KEY, full_url)
+
         const utmData = await db.Utms.create({
             utm_url,
             utm_campaign_id : utm_campaign_id || '-',
@@ -93,7 +92,7 @@ export async function createUtm(user_id, inputVal) {
             user_utm_source_id,
             user_id,
             full_url,
-            shorten_url : shorten_url || '-',
+            shorten_url : shorten_url.shortLink || '-',
             created_at: created_at || Date.now(),
         });
 
