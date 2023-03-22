@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import { router as UserRouter } from './src/routes/userRouter.js';
 import { router as UTMRouter } from './src/routes/utmRouter.js';
+import rateLimit from 'express-rate-limit';
 // import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
 import db from './models/index.js';
 
@@ -51,7 +52,6 @@ app.use(
     })
 );
 
-
 // 세션 설정
 app.use(
     session({
@@ -61,6 +61,16 @@ app.use(
         cookie: { secure: process.env.NODE_ENV === 'production' },
     })
 );
+
+// Rate limiter 설정
+const apiLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1분
+    max: 20, // 각 IP당 허용 요청 수
+    message: '과도한 요청으로 인해 일시적으로 사용이 제한되었습니다. 나중에 다시 시도하세요.',
+});
+
+// Rate limiter 미들웨어
+app.use(apiLimiter);
 
 // 카카오 로그인 전략 설정
 passport.use(kakaoStrategy);
@@ -72,11 +82,11 @@ app.use(UTMRouter);
 app.use('error', (err, req, res, next) => {
     console.error('Error : ', err);
     res.status(500).json({
-        errorName : err.name,
-        errorMessage : err.message,
+        errorName: err.name,
+        errorMessage: err.message,
         errorStack: err.stack,
-    })
-})
+    });
+});
 
 app.listen(process.env.SERVER_PORT, () => {
     `Server is listening on ${process.env.SERVER}`;

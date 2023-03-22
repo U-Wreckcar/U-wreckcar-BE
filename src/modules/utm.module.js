@@ -1,5 +1,5 @@
 import db from '../../models/index.js';
-import * as cuttly from 'cuttly'
+import * as cuttly from 'cuttly';
 
 // User_utm_source 생성
 export async function createUtmSources(user_id, utm_source) {
@@ -78,21 +78,20 @@ export async function createUtm(user_id, inputVal) {
             full_url += `&utm_content=${utm_content}`;
         }
 
-
-        const shorten_url = await cuttly.shortenUrl(process.env.CUTTLY_KEY, full_url)
+        const shorten_url = await cuttly.shortenUrl(process.env.CUTTLY_KEY, full_url);
 
         const utmData = await db.Utms.create({
             utm_url,
-            utm_campaign_id : utm_campaign_id || '-',
+            utm_campaign_id: utm_campaign_id || '-',
             utm_campaign_name,
-            utm_content : utm_content || '-',
+            utm_content: utm_content || '-',
             utm_memo: utm_memo || '-',
-            utm_term : utm_term || '-',
+            utm_term: utm_term || '-',
             user_utm_medium_id,
             user_utm_source_id,
             user_id,
             full_url,
-            shorten_url : shorten_url.shortLink || '-',
+            shorten_url: shorten_url.shortLink || '-',
             created_at: created_at || Date.now(),
         });
 
@@ -117,13 +116,24 @@ export async function deleteUtm(utm_id) {
 // UTM 전체 조회
 export async function getAllUtms(user_id) {
     try {
-        const result = await db.Utms.findAll({
-            where: { user_id },
-            include: [
-                { model: db.User_utm_mediums, as: 'utm_medium_name', attributes: ['medium_name'] },
-                { model: db.User_utm_sources, as: 'utm_source_name', attributes: ['source_name'] },
-            ],
-        });
+        const result = await db.Utms.findAll(
+            {
+                where: { user_id },
+                include: [
+                    {
+                        model: db.User_utm_mediums,
+                        as: 'utm_medium_name',
+                        attributes: ['medium_name'],
+                    },
+                    {
+                        model: db.User_utm_sources,
+                        as: 'utm_source_name',
+                        attributes: ['source_name'],
+                    },
+                ],
+            },
+            { order: [['created_at', 'desc']] }
+        );
         return result;
     } catch (err) {
         console.error(err);
