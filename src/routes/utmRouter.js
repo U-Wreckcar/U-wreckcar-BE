@@ -15,7 +15,7 @@ import { file_download } from '../controllers/utm/fileDownload.js';
 const router = express.Router();
 
 // UTM 데이터 추출 관련
-router.post('/api/utms/export/sheet', asyncWrapper(exportDataToCsv));
+router.get('/api/utms/export/sheet', asyncWrapper(exportDataToCsv));
 router.post('/api/utms/export/excell', asyncWrapper(exportDataToExcel));
 router.post('/api/utms/filter', asyncWrapper(utmFilters));
 router.patch('/api/utms/memo', asyncWrapper(utmMemo));
