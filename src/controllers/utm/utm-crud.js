@@ -118,10 +118,22 @@ export async function deleteUtmController(req, res, next) {
 export async function getAllUtmsController(req, res, next) {
     try {
         const { user_id } = req.user;
-        const dateFixResult = await getAllUtms(user_id);
+        let dateFixResult = await getAllUtms(user_id);
         const result = dateFixResult.map((doc) => {
-            doc.created_at = new Date(doc.created_at).toISOString().slice(0, 10);
-            return doc;
+            return {
+                utm_id : doc.utm_id,
+                utm_url : doc.utm_url,
+                utm_campaign_id : doc.utm_campaign_id,
+                utm_campaign_name : doc.utm_campaign_name,
+                utm_content : doc.utm_content,
+                utm_term : doc.utm_term,
+                utm_memo : doc.utm_memo,
+                full_url : doc.full_url,
+                shorten_url : doc.shorten_url,
+                utm_medium_name : doc.utm_medium_name.medium_name,
+                utm_source_name : doc.utm_source_name.source_name,
+                created_at_filter : new Date(doc.created_at).toISOString().slice(0, 10),
+            };
         })
         res.status(200).json(result);
     } catch (err) {
@@ -135,14 +147,13 @@ export async function getAllUtmsController(req, res, next) {
 
 export async function getExternalUtmController(req, res, next) {
     try {
-        const { externalUrl, created_at, utm_memo } = req.body;
+        const { utm_url, created_at, memo } = req.body;
         let doc = {
-            user_id: req.user.user_id,
             created_at,
-            utm_memo,
+            utm_memo : memo,
         };
 
-        const [baseUrl, utmResources] = externalUrl.split('?');
+        const [baseUrl, utmResources] = utm_url.split('?');
         doc['utm_url'] = baseUrl.slice(8);
         const splitResources = utmResources.split('&');
 
@@ -155,7 +166,7 @@ export async function getExternalUtmController(req, res, next) {
             }
         });
 
-        const result = await createUtm(doc);
+        const result = await createUtm(req.user.user_id, doc);
         res.status(200).json(result);
     } catch (err) {
         console.error(err);

@@ -18,7 +18,6 @@ const Utms = (sequelize, DataTypes) => {
             },
             utm_campaign_name: {
                 type: DataTypes.STRING,
-                allowNull: false,
             },
             utm_content: {
                 type: DataTypes.STRING,
@@ -35,7 +34,6 @@ const Utms = (sequelize, DataTypes) => {
             },
             shorten_url: {
                 type: DataTypes.STRING,
-                allowNull: false,
             },
         },
         {
@@ -50,10 +48,12 @@ const Utms = (sequelize, DataTypes) => {
     Utms.associate = (db) => {
         db.Utms.belongsTo(db.User_utm_sources, {
             foreignKey: 'user_utm_source_id',
+            as: 'utm_source_name',
             onDelete: 'CASCADE',
         });
         db.Utms.belongsTo(db.User_utm_mediums, {
             foreignKey: 'user_utm_medium_id',
+            as: 'utm_medium_name',
             onDelete: 'CASCADE',
         });
         db.Utms.belongsTo(db.Users, { foreignKey: 'user_id', onDelete: 'CASCADE' });

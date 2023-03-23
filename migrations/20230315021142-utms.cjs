@@ -19,7 +19,6 @@ module.exports = {
       },
       utm_campaign_name: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
       utm_content: {
         type: Sequelize.STRING,
@@ -36,7 +35,6 @@ module.exports = {
       },
       shorten_url: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
       user_utm_source_id: {
         allowNull: false,
@@ -67,11 +65,11 @@ module.exports = {
       },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE(6),
       },
       updated_at: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE(6),
       }
     });
   },
