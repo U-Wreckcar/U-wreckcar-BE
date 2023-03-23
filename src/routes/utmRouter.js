@@ -27,8 +27,8 @@ router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
 router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));
 router.post('/api/utms', authenticate, asyncWrapper(createUtmController));
 router.post('/api/utms/external', authenticate, asyncWrapper(getExternalUtmController));
-router.get('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
-router.get('/api/utms/toexcel', authenticate, asyncWrapper(exportExcelFileController))
+router.post('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
+router.post('/api/utms/toexcel', authenticate, asyncWrapper(exportExcelFileController))
 router.get('/api/utms/topdf')
 
 export { router };
