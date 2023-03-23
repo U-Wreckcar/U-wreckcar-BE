@@ -102,7 +102,7 @@ export async function createUtm(user_id, inputVal) {
             user_utm_source_id,
             user_id,
             full_url,
-            shorten_url: shorten_url.shortLink || '-',
+            shorten_url: shorten_url || '-',
             created_at: created_at || Date.now(),
         });
 
