@@ -1,7 +1,11 @@
 import db from '../../models/index.js';
-import * as cuttly from 'cuttly';
 import axios from 'axios';
 import { nanoid } from 'nanoid';
+import Papa from 'papaparse';
+import xlsx from 'json-as-xlsx';
+import fs from 'fs';
+import path from 'path';
+const __dirname = path.resolve();
 
 // User_utm_source 생성
 export async function createUtmSources(user_id, utm_source) {
@@ -72,7 +76,7 @@ export async function createUtm(user_id, inputVal) {
         // crated_at 에 입력한 날짜가 없으면 오늘 날짜로 YYYY-MM-DD 로 변환
         // const dateOnly = new Date(created_at || Date.now()).toISOString().slice(0, 10);
 
-        let full_url = `https://${utm_url}?utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign_name}`;
+        let full_url = `${utm_url}?utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign_name}`;
 
         if (utm_term) {
             full_url += `&utm_term=${utm_term}`;
@@ -146,6 +150,118 @@ export async function getAllUtms(user_id) {
             { order: [['created_at', 'desc']] }
         );
         return result;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+}
+
+// UTM CSV 용 전체 조회
+export async function getCSVUtms(user_id) {
+    try {
+        const result = await db.Utms.findAll(
+            {
+                where: { user_id },
+                include: [
+                    {
+                        model: db.User_utm_mediums,
+                        as: 'utm_medium_name',
+                        attributes: ['medium_name'],
+                    },
+                    {
+                        model: db.User_utm_sources,
+                        as: 'utm_source_name',
+                        attributes: ['source_name'],
+                    },
+                ],
+            },
+            { order: [['created_at', 'desc']] }
+        );
+        return result;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+}
+
+export async function createCSVFile(user_id, filename, data) {
+    try {
+        // const jsonData = data.map((doc) => {
+        //     return {
+        //         utm_id: doc.utm_id,
+        //         utm_url: doc.utm_url,
+        //         utm_campaign_id: doc.utm_campaign_id,
+        //         utm_campaign_name: doc.utm_campaign_name,
+        //         utm_content: doc.utm_content,
+        //         utm_term: doc.utm_term,
+        //         utm_memo: doc.utm_memo,
+        //         full_url: doc.full_url,
+        //         shorten_url: doc.shorten_url,
+        //         utm_medium_name: doc.utm_medium_name.medium_name,
+        //         utm_source_name: doc.utm_source_name.source_name,
+        //         created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
+        //     };
+        // });
+        const csv = Papa.unparse(data);
+        fs.writeFile(__dirname + `/dist/${filename}.csv`, csv, (err) => {
+            if (err) throw err;
+        });
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+}
+
+export async function createExcelFile(user_id, filename, data) {
+    try {
+        // const jsonData = await Promise.all(
+        //     data.map((doc) => {
+        //         return {
+        //             utm_id: doc.utm_id,
+        //             utm_url: doc.utm_url,
+        //             utm_campaign_id: doc.utm_campaign_id,
+        //             utm_campaign_name: doc.utm_campaign_name,
+        //             utm_content: doc.utm_content,
+        //             utm_term: doc.utm_term,
+        //             utm_memo: doc.utm_memo,
+        //             full_url: doc.full_url,
+        //             shorten_url: doc.shorten_url,
+        //             utm_medium_name: doc.utm_medium_name.medium_name,
+        //             utm_source_name: doc.utm_source_name.source_name,
+        //             created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
+        //         };
+        //     })
+        // );
+
+        let sheetData = [
+            {
+                sheet: 'MyUTM',
+                columns: [
+                    { label: 'UTM_url', value: 'utm_url' },
+                    { label: 'UTM_campaign_id', value: 'utm_campaign_id' },
+                    { label: 'UTM_campaign_name', value: 'utm_campaign_name' },
+                    { label: 'UTM_medium', value: 'utm_medium_name' },
+                    { label: 'UTM_source', value: 'utm_source_name' },
+                    { label: 'UTM_content', value: 'utm_content' },
+                    { label: 'UTM_term', value: 'utm_term' },
+                    { label: 'UTM_memo', value: 'utm_memo' },
+                    { label: 'UTM_full_url', value: 'full_url' },
+                    { label: 'UTM_shorten_url', value: 'shorten_url' },
+                    { label: 'UTM_created_at', value: 'created_at_filter' },
+                ],
+                content: data,
+            },
+        ];
+        let settings = {
+            fileName: `./dist/${filename}`,
+            extraLength: 11, // A bigger number means that columns will be wider
+            writeMode: 'writeFile', // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
+            writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
+            RTL: false, // Display the columns from right-to-left (the default value is false)
+        };
+        xlsx(sheetData, settings, (sheet) => {
+            console.log(`./dist/${filename}.xlsx file created.`);
+        });
     } catch (err) {
         console.error(err);
         return err;
