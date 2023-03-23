@@ -4,13 +4,14 @@ import { exportDataToExcel } from '../controllers/utm/exportDataToExcel.js';
 import { exportDataToCsv } from '../controllers/utm/exportDataToCsv.js';
 import {
     createUtmController,
-    deleteUtmController,
+    deleteUtmController, exportExcelFileController,
     getAllUtmsController,
     getExternalUtmController,
 } from '../controllers/utm/utm-crud.js';
 import { utmFilters } from '../controllers/utm/utmFilter.js';
 import { utmMemo } from '../controllers/utm/utmMemo.js';
 import { file_download } from '../controllers/utm/fileDownload.js';
+import {exportCSVFileController} from '../controllers/utm/utm-crud.js';
 
 const router = express.Router();
 
@@ -26,5 +27,8 @@ router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
 router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));
 router.post('/api/utms', authenticate, asyncWrapper(createUtmController));
 router.post('/api/utms/external', authenticate, asyncWrapper(getExternalUtmController));
+router.post('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
+router.post('/api/utms/toxlsx',  authenticate, asyncWrapper(exportExcelFileController))
+router.get('/api/utms/topdf')
 
 export { router };

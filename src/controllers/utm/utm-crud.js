@@ -1,6 +1,16 @@
-import { createUtm, getAllUtms } from '../../modules/utm.module.js';
+import {
+    createCSVFile,
+    createExcelFile,
+    createUtm,
+    getAllUtms,
+    getCSVUtms,
+} from '../../modules/utm.module.js';
 import { createConnection } from 'mysql2/promise.js';
 import config from '../../config/dbconfig.js';
+import Papa from 'papaparse';
+import fs from 'fs';
+import path from 'path';
+const __dirname = path.resolve();
 
 export async function createUtmController(req, res, next) {
     try {
@@ -82,10 +92,10 @@ export async function deleteUtmController(req, res, next) {
         // } else {
         //     res.status(200).json(result);
         // }
-        const input = req.body['data'] // req 값으로 나오는 배열과 객체값
+        const input = req.body['data']; // req 값으로 나오는 배열과 객체값
         const utm_id_arr = [];
-        input.forEach(element => {
-            utm_id_arr.push(element['utm_id']);   // input 에서 utm_id 만 추출해서 따로 저장
+        input.forEach((element) => {
+            utm_id_arr.push(element['utm_id']); // input 에서 utm_id 만 추출해서 따로 저장
         });
 
         let sql_id_add = 'WHERE ';
@@ -104,8 +114,8 @@ export async function deleteUtmController(req, res, next) {
         await connection.execute(sql_query);
 
         res.json({
-            msg: "utm_id 삭제성공",
-        })
+            msg: 'utm_id 삭제성공',
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({
@@ -121,20 +131,20 @@ export async function getAllUtmsController(req, res, next) {
         let dateFixResult = await getAllUtms(user_id);
         const result = dateFixResult.map((doc) => {
             return {
-                utm_id : doc.utm_id,
-                utm_url : doc.utm_url,
-                utm_campaign_id : doc.utm_campaign_id,
-                utm_campaign_name : doc.utm_campaign_name,
-                utm_content : doc.utm_content,
-                utm_term : doc.utm_term,
-                utm_memo : doc.utm_memo,
-                full_url : doc.full_url,
-                shorten_url : doc.shorten_url,
-                utm_medium_name : doc.utm_medium_name.medium_name,
-                utm_source_name : doc.utm_source_name.source_name,
-                created_at_filter : new Date(doc.created_at).toISOString().slice(0, 10),
+                utm_id: doc.utm_id,
+                utm_url: doc.utm_url,
+                utm_campaign_id: doc.utm_campaign_id,
+                utm_campaign_name: doc.utm_campaign_name,
+                utm_content: doc.utm_content,
+                utm_term: doc.utm_term,
+                utm_memo: doc.utm_memo,
+                full_url: doc.full_url,
+                shorten_url: doc.shorten_url,
+                utm_medium_name: doc.utm_medium_name.medium_name,
+                utm_source_name: doc.utm_source_name.source_name,
+                created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
             };
-        })
+        });
         res.status(200).json(result);
     } catch (err) {
         console.error(err);
@@ -150,7 +160,7 @@ export async function getExternalUtmController(req, res, next) {
         const { utm_url, created_at, memo } = req.body;
         let doc = {
             created_at,
-            utm_memo : memo,
+            utm_memo: memo,
         };
 
         const [baseUrl, utmResources] = utm_url.split('?');
@@ -168,6 +178,57 @@ export async function getExternalUtmController(req, res, next) {
 
         const result = await createUtm(req.user.user_id, doc);
         res.status(200).json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: err.message,
+            stack: err.stack,
+        });
+    }
+}
+
+export async function exportCSVFileController(req, res, next) {
+    try {
+        const { user_id } = req.user;
+        const checkDataId = req.body.data;
+        const filename = `${user_id}-csv-${new Date(Date.now()).toISOString().slice(0, 10)}`;
+        await createExcelFile(user_id, filename, checkDataId);
+        // await createCSVFile(filename, checkDataId)
+        res.status(200).download(
+            __dirname + `/dist/${filename}.xlsx`,
+            `${filename}.xlsx`,
+            (err) => {
+                if (err) throw err;
+                fs.unlink(__dirname + `/dist/${filename}.xlsx`, (err) => {
+                    if (err) throw err;
+                });
+            }
+        );
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: err.message,
+            stack: err.stack,
+        });
+    }
+}
+
+export async function exportExcelFileController(req, res, next) {
+    try {
+        const { user_id } = req.user;
+        const checkDataId = req.body.data;
+        const filename = `${user_id}-${new Date(Date.now()).toISOString().slice(0, 10)}`;
+        await createExcelFile(user_id, filename, checkDataId);
+        res.status(200).download(
+            __dirname + `/dist/${filename}.xlsx`,
+            `${filename}.xlsx`,
+            (err) => {
+                if (err) throw err;
+                fs.unlink(__dirname + `/dist/${filename}.xlsx`, (err) => {
+                    if (err) throw err;
+                });
+            }
+        );
     } catch (err) {
         console.error(err);
         res.status(500).json({

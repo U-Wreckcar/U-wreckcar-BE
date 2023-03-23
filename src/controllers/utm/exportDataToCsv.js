@@ -37,6 +37,7 @@ async function exportDataToCsv(req, res) {
         const filepath = `src\\controllers\\utm\\export\\${filename}`;
         // const filepath = `src\\controllers\\utm\\export\\${filename}`;
 
+
         const test1 = 'SELECT * FROM uwreckcar_db.Utms';
         const test2 = 'SELECT * FROM uwreckcar_db.Utms where utm_id=143';
         //-------------------
@@ -51,7 +52,6 @@ async function exportDataToCsv(req, res) {
         // console.log('여기는 로우스 입니달ㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ', [rows]);
 
         const csvStream = csv.format({ headers: true, encoding: 'utf8mb4' });
-
         csvStream.pipe(fs.createWriteStream(filepath, { encoding: 'utf8' })).on('finish', () => {
             console.log('CSV 파일이 잘 완성되었습니다.');
         });
@@ -75,7 +75,6 @@ async function exportDataToCsv(req, res) {
         let contentType = 'text/csv';
         console.log(contentType);
 
-
         fs.stat(filepath, (err, stat) => {
             if (err) {
                 console.error(err);
@@ -83,17 +82,16 @@ async function exportDataToCsv(req, res) {
             }
             res.setHeader('Content-Type', contentType);
             res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
-            // res.setHeader('Content-Transfer-Encoding', 'binary');
-            // res.setHeader('Cache-Control', 'public, max-age=0');
-            // res.setHeader('Expires', '-1');
-            // res.setHeader('Pragma', 'public');
-            // res.setHeader('Content-Length', stat.size);
-            // res.setHeader('compress', false);
-            console.log('여기는 파일스트림 직전');
+            res.setHeader('Content-Transfer-Encoding', 'binary');
+            res.setHeader('Cache-Control', 'public, max-age=0');
+            res.setHeader('Expires', '-1');
+            res.setHeader('Pragma', 'public');
+            res.setHeader('Content-Length', stat.size);
+            res.setHeader('compress', false);
+
+            // 파일읽은후 내보내기 최종
             const fileStream = fs.createReadStream(filepath);
-            if (fileStream) {
-                fileStream.pipe(res);
-            }
+            fileStream.pipe(res);
             fileStream.on('close', () => {
                 console.log('File stream closed');
             });
@@ -102,6 +100,25 @@ async function exportDataToCsv(req, res) {
             });
         });
     }
+
+    const myFunction = async () => {
+        try {
+            await new Promise((resolve, reject) => {
+                export_file_user((err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+            console.log('콜백함수가 무사히 실행되었습니다.');
+        } catch (err) {
+            // Error handling code
+            console.error('에러가 발생했습니다.', err);
+        }
+    };
+    myFunction();
 }
 // 파일 세팅
 
