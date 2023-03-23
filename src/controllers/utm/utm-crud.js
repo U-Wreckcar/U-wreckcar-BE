@@ -1,4 +1,10 @@
-import {createCSVFile, createExcelFile, createUtm, getAllUtms, getCSVUtms} from '../../modules/utm.module.js';
+import {
+    createCSVFile,
+    createExcelFile,
+    createUtm,
+    getAllUtms,
+    getCSVUtms,
+} from '../../modules/utm.module.js';
 import { createConnection } from 'mysql2/promise.js';
 import config from '../../config/dbconfig.js';
 import Papa from 'papaparse';
@@ -185,14 +191,15 @@ export async function exportCSVFileController(req, res, next) {
     try {
         const { user_id } = req.user;
         const checkDataId = req.body.data;
-        const filename = `${user_id}-${new Date(Date.now()).toISOString().slice(0, 10)}`;
-        await createCSVFile(filename, checkDataId)
+        const filename = `${user_id}-csv-${new Date(Date.now()).toISOString().slice(0, 10)}`;
+        await createExcelFile(user_id, filename, checkDataId);
+        // await createCSVFile(filename, checkDataId)
         res.status(200).download(
-            __dirname + `/dist/${filename}.csv`,
-            `${filename}.csv`,
+            __dirname + `/dist/${filename}.xlsx`,
+            `${filename}.xlsx`,
             (err) => {
                 if (err) throw err;
-                fs.unlink(__dirname + `/dist/${filename}.csv`, (err) => {
+                fs.unlink(__dirname + `/dist/${filename}.xlsx`, (err) => {
                     if (err) throw err;
                 });
             }
