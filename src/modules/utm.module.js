@@ -184,24 +184,8 @@ export async function getCSVUtms(user_id) {
     }
 }
 
-export async function createCSVFile(user_id, filename, data) {
+export async function createCSVFile(filename, data) {
     try {
-        // const jsonData = data.map((doc) => {
-        //     return {
-        //         utm_id: doc.utm_id,
-        //         utm_url: doc.utm_url,
-        //         utm_campaign_id: doc.utm_campaign_id,
-        //         utm_campaign_name: doc.utm_campaign_name,
-        //         utm_content: doc.utm_content,
-        //         utm_term: doc.utm_term,
-        //         utm_memo: doc.utm_memo,
-        //         full_url: doc.full_url,
-        //         shorten_url: doc.shorten_url,
-        //         utm_medium_name: doc.utm_medium_name.medium_name,
-        //         utm_source_name: doc.utm_source_name.source_name,
-        //         created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
-        //     };
-        // });
         const csv = Papa.unparse(data);
         fs.writeFile(__dirname + `/dist/${filename}.csv`, csv, (err) => {
             if (err) throw err;
@@ -214,25 +198,6 @@ export async function createCSVFile(user_id, filename, data) {
 
 export async function createExcelFile(user_id, filename, data) {
     try {
-        // const jsonData = await Promise.all(
-        //     data.map((doc) => {
-        //         return {
-        //             utm_id: doc.utm_id,
-        //             utm_url: doc.utm_url,
-        //             utm_campaign_id: doc.utm_campaign_id,
-        //             utm_campaign_name: doc.utm_campaign_name,
-        //             utm_content: doc.utm_content,
-        //             utm_term: doc.utm_term,
-        //             utm_memo: doc.utm_memo,
-        //             full_url: doc.full_url,
-        //             shorten_url: doc.shorten_url,
-        //             utm_medium_name: doc.utm_medium_name.medium_name,
-        //             utm_source_name: doc.utm_source_name.source_name,
-        //             created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
-        //         };
-        //     })
-        // );
-
         let sheetData = [
             {
                 sheet: 'MyUTM',

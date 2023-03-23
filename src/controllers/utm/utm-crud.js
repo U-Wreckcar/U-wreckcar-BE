@@ -185,15 +185,14 @@ export async function exportCSVFileController(req, res, next) {
     try {
         const { user_id } = req.user;
         const checkDataId = req.body.data;
-        const timestamp = new Date(Date.now()).toISOString().slice(0, 10);
-        // let dateFixResult = await getCSVUtms(user_id);
-        await createCSVFile(user_id, timestamp, checkDataId)
+        const filename = `${user_id}-${new Date(Date.now()).toISOString().slice(0, 10)}`;
+        await createCSVFile(filename, checkDataId)
         res.status(200).download(
-            __dirname + `/dist/${timestamp}.csv`,
-            `${timestamp}.csv`,
+            __dirname + `/dist/${filename}.csv`,
+            `${filename}.csv`,
             (err) => {
                 if (err) throw err;
-                fs.unlink(__dirname + `/dist/${timestamp}.csv`, (err) => {
+                fs.unlink(__dirname + `/dist/${filename}.csv`, (err) => {
                     if (err) throw err;
                 });
             }
@@ -212,8 +211,6 @@ export async function exportExcelFileController(req, res, next) {
         const { user_id } = req.user;
         const checkDataId = req.body.data;
         const filename = `${user_id}-${new Date(Date.now()).toISOString().slice(0, 10)}`;
-        let dateFixResult = await getCSVUtms(user_id);
-        // await createCSVFile(user_id, filename, dateFixResult);
         await createExcelFile(user_id, filename, checkDataId);
         res.status(200).download(
             __dirname + `/dist/${filename}.xlsx`,
