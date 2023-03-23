@@ -65,7 +65,7 @@ app.use(
 // Rate limiter 설정
 const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1분
-    max: 20, // 각 IP당 허용 요청 수
+    max: 60, // 각 IP당 허용 요청 수
     message: '과도한 요청으로 인해 일시적으로 사용이 제한되었습니다. 나중에 다시 시도하세요.',
 });
 
