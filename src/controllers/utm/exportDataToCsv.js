@@ -11,20 +11,53 @@ import { file_download } from './fileDownload.js';
 const fsPromises = fs.promises;
 
 async function exportDataToCsv(req, res) {
+    //     // 파일 삭제 로직 생성
+    // const delete_path = `src\\controllers\\utm\\export\\`;
+    // // const delete_path = `src/controllers/utm/export/`;
+    // async function deleteAllFilesInFolder(folderPath) {
+    //     fs.readdir(folderPath, (err, files) => {
+    //         if (err) throw err;
+    //         for (const file of files) {
+    //             fs.unlink(path.join(folderPath, file), (err) => {
+    //                 if (err) throw err;
+    //                 console.log('파일삭제완료')
+    //             });
+    //         }
+    //     });
+    // }
+    // deleteAllFilesInFolder(delete_path);
+
     const db = config.test_db_config;
     const connection = await createConnection(db);
 
-    const input = req.body;
-    console.log(input);
-    // const input= [
-    //     {
-    //         utm_id: 69,
-    //         utm_url: 'naver.com/',
-    //         utm_campaign_id: 'blog',
-    //         utm_campaign_name: 'blogproject',
-    //     },
-    //     { utm_id: 143, utm_url: 'daum.com', utm_campaign_id: 'dfdfsd', utm_campaign_name: 'fsdsf' },
-    // ];
+    // const input = req.body;
+    // console.log(input);
+    const input = [
+        {
+            utm_id: 62,
+            utm_url: 'naver.com/',
+            utm_campaign_id: 'blog',
+            utm_campaign_name: 'blogproject',
+        },
+        {
+            utm_id: 63,
+            utm_url: 'naver.com/',
+            utm_campaign_id: 'blog',
+            utm_campaign_name: 'blogproject',
+        },
+        {
+            utm_id: 64,
+            utm_url: 'naver.com/',
+            utm_campaign_id: 'blog',
+            utm_campaign_name: 'blogproject',
+        },
+        {
+            utm_id: 83,
+            utm_url: 'naver.com/',
+            utm_campaign_id: 'blog',
+            utm_campaign_name: 'blogproject',
+        },
+    ];
 
     const utm_id_arr = [];
     input.forEach((index) => {
@@ -80,30 +113,51 @@ async function exportDataToCsv(req, res) {
     // 사용자의 브라우저가 파일을 다운로드하도록 요청하는 데 필요한 헤더 설정
     // 파일 추출후 읽을 수 있는 상태로 추출하기를 할 수 있도록 포멧터 설정
     // 파일 세팅
-    fs.stat(filepath, (err, stat) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        res.setHeader('Content-Type', contentType);
-        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
-        res.setHeader('Content-Transfer-Encoding', 'binary');
-        res.setHeader('Cache-Control', 'public, max-age=0');
-        res.setHeader('Expires', '-1');
-        res.setHeader('Pragma', 'public');
-        res.setHeader('Content-Length', stat.size);
-        res.setHeader('compress', false);
+    function export_file_user() {
+        fs.stat(filepath, (err, stat) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            res.setHeader('Content-Type', contentType);
+            res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+            res.setHeader('Content-Transfer-Encoding', 'binary');
+            res.setHeader('Cache-Control', 'public, max-age=0');
+            res.setHeader('Expires', '-1');
+            res.setHeader('Pragma', 'public');
+            res.setHeader('Content-Length', stat.size);
+            res.setHeader('compress', false);
 
-        // 파일읽은후 내보내기 최종
-        const fileStream = fs.createReadStream(filepath);
-        fileStream.pipe(res);
-        fileStream.on('close', () => {
-            console.log('File stream closed');
+            // 파일읽은후 내보내기 최종
+            const fileStream = fs.createReadStream(filepath);
+            fileStream.pipe(res);
+            fileStream.on('close', () => {
+                console.log('File stream closed');
+            });
+            fileStream.on('error', (err) => {
+                console.log(`File stream error: ${err}`);
+            });
         });
-        fileStream.on('error', (err) => {
-            console.log(`File stream error: ${err}`);
-        });
-    });
+    }
+
+    const myFunction = async () => {
+        try {
+            await new Promise((resolve, reject) => {
+                export_file_user((err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+            console.log('콜백함수가 무사히 실행되었습니다.');
+        } catch (err) {
+            // Error handling code
+            console.error('에러가 발생했습니다.', err);
+        }
+    };
+    myFunction();
 }
 
 export { exportDataToCsv };
