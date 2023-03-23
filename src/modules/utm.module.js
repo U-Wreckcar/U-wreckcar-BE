@@ -1,5 +1,7 @@
 import db from '../../models/index.js';
 import * as cuttly from 'cuttly';
+import axios from 'axios';
+import { nanoid } from 'nanoid';
 
 // User_utm_source 생성
 export async function createUtmSources(user_id, utm_source) {
@@ -78,7 +80,16 @@ export async function createUtm(user_id, inputVal) {
             full_url += `&utm_content=${utm_content}`;
         }
 
-        const shorten_url = await cuttly.shortenUrl(process.env.CUTTLY_KEY, full_url);
+        // const shorten_url = await cuttly.shortenUrl(process.env.CUTTLY_KEY, full_url);
+
+        const axiosResponse = await axios.post('https://li.urcurly.site/rd', {
+            full_url,
+            id: nanoid(10),
+        });
+        const shorten_url = axiosResponse.data?.shortUrl;
+        if (shorten_url === undefined) {
+            throw new Error('Could not make shortUrl.');
+        }
 
         const utmData = await db.Utms.create({
             utm_url,
