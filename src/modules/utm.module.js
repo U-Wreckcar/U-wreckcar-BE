@@ -131,24 +131,22 @@ export async function deleteUtm(utm_id) {
 // UTM 전체 조회
 export async function getAllUtms(user_id) {
     try {
-        const result = await db.Utms.findAll(
-            {
-                where: { user_id },
-                include: [
-                    {
-                        model: db.User_utm_mediums,
-                        as: 'utm_medium_name',
-                        attributes: ['medium_name'],
-                    },
-                    {
-                        model: db.User_utm_sources,
-                        as: 'utm_source_name',
-                        attributes: ['source_name'],
-                    },
-                ],
-            },
-            { order: [['created_at', 'desc']] }
-        );
+        const result = await db.Utms.findAll({
+            where: { user_id },
+            include: [
+                {
+                    model: db.User_utm_mediums,
+                    as: 'utm_medium_name',
+                    attributes: ['medium_name'],
+                },
+                {
+                    model: db.User_utm_sources,
+                    as: 'utm_source_name',
+                    attributes: ['source_name'],
+                },
+            ],
+            order: [['created_at', 'DESC']],
+        });
         return result;
     } catch (err) {
         console.error(err);
@@ -159,24 +157,22 @@ export async function getAllUtms(user_id) {
 // UTM CSV 용 전체 조회
 export async function getCSVUtms(user_id) {
     try {
-        const result = await db.Utms.findAll(
-            {
-                where: { user_id },
-                include: [
-                    {
-                        model: db.User_utm_mediums,
-                        as: 'utm_medium_name',
-                        attributes: ['medium_name'],
-                    },
-                    {
-                        model: db.User_utm_sources,
-                        as: 'utm_source_name',
-                        attributes: ['source_name'],
-                    },
-                ],
-            },
-            { order: [['created_at', 'desc']] }
-        );
+        const result = await db.Utms.findAll({
+            where: { user_id },
+            include: [
+                {
+                    model: db.User_utm_mediums,
+                    as: 'utm_medium_name',
+                    attributes: ['medium_name'],
+                },
+                {
+                    model: db.User_utm_sources,
+                    as: 'utm_source_name',
+                    attributes: ['source_name'],
+                },
+            ],
+            order: [['created_at', 'DESC']],
+        });
         return result;
     } catch (err) {
         console.error(err);
@@ -186,10 +182,25 @@ export async function getCSVUtms(user_id) {
 
 export async function createCSVFile(filename, data) {
     try {
-        const csv = Papa.unparse(data);
-        fs.writeFile(__dirname + `/dist/${filename}.csv`, csv, (err) => {
-            if (err) throw err;
+        const columns = [];
+        Object.keys(data[0]).forEach((col) => {
+            columns.push(col);
         });
+        let csvData = columns.join(',') + '\r\n';
+
+        data.forEach((doc) => {
+            const utmData = [];
+            Object.keys(doc).forEach((key) => {
+                csvData += utmData.push(doc[key]);
+            });
+            csvData += utmData.join(',') + '\r\n';
+        });
+
+        return csvData;
+        // const csv = Papa.unparse(data);
+        // fs.writeFile(__dirname + `/dist/${filename}.csv`, csv, (err) => {
+        //     if (err) throw err;
+        // });
     } catch (err) {
         console.error(err);
         return err;
