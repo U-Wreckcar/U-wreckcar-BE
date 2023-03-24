@@ -192,18 +192,13 @@ export async function exportCSVFileController(req, res, next) {
         const { user_id } = req.user;
         const checkDataId = req.body.data;
         const filename = `${user_id}-csv-${new Date(Date.now()).toISOString().slice(0, 10)}`;
-        await createExcelFile(user_id, filename, checkDataId);
-        // await createCSVFile(filename, checkDataId)
-        res.status(200).download(
-            __dirname + `/dist/${filename}.xlsx`,
-            `${filename}.xlsx`,
-            (err) => {
-                if (err) throw err;
-                fs.unlink(__dirname + `/dist/${filename}.xlsx`, (err) => {
-                    if (err) throw err;
-                });
-            }
-        );
+        const csvData = await createCSVFile(filename, checkDataId);
+        res.set({
+            'Content-Type': 'text/csv',
+            'Content-Disposition': `attachment; filename="${filename}.csv"`,
+        })
+            .status(200)
+            .send(csvData);
     } catch (err) {
         console.error(err);
         res.status(500).json({
