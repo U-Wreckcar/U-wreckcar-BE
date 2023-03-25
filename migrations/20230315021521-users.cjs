@@ -22,6 +22,19 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      phone_no: {
+        type: Sequelize.STRING,
+      },
+      password: {
+        type: Sequelize.STRING,
+      },
+      company_name: {
+        type: Sequelize.STRING,
+      },
+      marketing_accept: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE(6),
