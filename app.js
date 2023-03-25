@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
+import RedisStore from 'connect-redis';
+import redisClient from './src/config/redis.config.js';
 import helmet from 'helmet';
 import { kakaoStrategy } from './src/config/kakaoStrategy.js';
 import cors from 'cors';
@@ -42,6 +44,32 @@ mongodb()
     })
     .catch((err) => console.error(err));
 
+// Redis initial
+redisClient.flushdb((err) => {
+    if (err) {
+        console.error('Error flushing Redis: ', err);
+    } else {
+        console.log('Redis session data cleared.');
+    }
+});
+
+// 세션 설정
+app.use(
+    session({
+        store: new RedisStore({
+            client: redisClient,
+            prefix: 'session:',
+            disableTouch: true,
+        }),
+        secret: process.env.SESSION_SECRET_KEY,
+        resave: false,
+        saveUninitialized: true,
+        cookie: {
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 1000 * 60 * 60 * 24, // 쿠키의 만료 기간을 설정합니다. 여기서는 24시간으로 설정했습니다.
+        },
+    })
+);
 app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
 
@@ -57,16 +85,6 @@ app.use(
             }
         },
         credentials: true,
-    })
-);
-
-// 세션 설정
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET_KEY,
-        resave: false,
-        saveUninitialized: true,
-        cookie: { secure: process.env.NODE_ENV === 'production' },
     })
 );
 
