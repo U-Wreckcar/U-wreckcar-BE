@@ -121,7 +121,7 @@ export async function createUtm(user_id, inputVal) {
 export async function deleteUtm(utm_id) {
     try {
         const result = await db.Utms.destroy({ where: { utm_id } });
-        return result ? { success: true } : { success: false, message: 'invalid utm_id.' };
+        return result ? { success: true } : new Error(`invalid utm_id : ${utm_id}`);
     } catch (err) {
         console.error(err);
         return err;
