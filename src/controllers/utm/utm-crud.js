@@ -3,6 +3,7 @@ import {
     createExcelFile,
     createUtm,
     getAllUtms,
+    deleteUtm,
     getCSVUtms,
 } from '../../modules/utm.module.js';
 import { createConnection } from 'mysql2/promise.js';
