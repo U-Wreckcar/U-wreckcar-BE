@@ -26,6 +26,7 @@
     "helmet": "^6.0.1",
     "json-as-xlsx": "^2.5.3",
     "link-shortener": "^1.2.1",
+    "mongodb": "^5.1.0",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.1.2",

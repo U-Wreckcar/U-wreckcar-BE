@@ -12,6 +12,7 @@ import { router as UTMRouter } from './src/routes/utmRouter.js';
 import rateLimit from 'express-rate-limit';
 // import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
 import db from './models/index.js';
+import { run as mongodb } from './config/mongo.config.js';
 
 const app = express();
 app.use(helmet());
@@ -33,6 +34,13 @@ db.sequelize
     .catch((err) => {
         console.error(err);
     });
+
+// mongoDB initial
+mongodb()
+    .then(() => {
+        console.log('MongoDB connected');
+    })
+    .catch((err) => console.error(err));
 
 app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());

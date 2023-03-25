@@ -11,6 +11,7 @@ import config from '../../config/dbconfig.js';
 import Papa from 'papaparse';
 import fs from 'fs';
 import path from 'path';
+import { getShortUrlClickCount } from '../../modules/mongo.module.js';
 const __dirname = path.resolve();
 
 export async function createUtmController(req, res, next) {
@@ -72,11 +73,8 @@ export async function deleteUtmController(req, res, next) {
         const result = await Promise.all(
             deleteData.map(async (utm) => {
                 try {
-                    await deleteUtm(utm.utm_id);
-                    return {
-                        error: false,
-                        message: 'deleted successfully.',
-                    }
+                    const result = await deleteUtm(utm.utm_id);
+                    return result;
                 } catch (err) {
                     console.error(err);
                     return {
@@ -94,8 +92,8 @@ export async function deleteUtmController(req, res, next) {
             res.status(500).json(result);
         } else {
             res.status(200).json({
-                success:true,
-                message: 'deleted successfully.'
+                success: true,
+                message: 'deleted successfully.',
             });
         }
         // const input = req.body['data']; // req 값으로 나오는 배열과 객체값
@@ -135,22 +133,26 @@ export async function getAllUtmsController(req, res, next) {
     try {
         const { user_id } = req.user;
         let dateFixResult = await getAllUtms(user_id);
-        const result = dateFixResult.map((doc) => {
-            return {
-                utm_id: doc.utm_id,
-                utm_url: doc.utm_url,
-                utm_campaign_id: doc.utm_campaign_id,
-                utm_campaign_name: doc.utm_campaign_name,
-                utm_content: doc.utm_content,
-                utm_term: doc.utm_term,
-                utm_memo: doc.utm_memo,
-                full_url: doc.full_url,
-                shorten_url: doc.shorten_url,
-                utm_medium_name: doc.utm_medium_name.medium_name,
-                utm_source_name: doc.utm_source_name.source_name,
-                created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
-            };
-        });
+        const result = await Promise.all(
+            dateFixResult.map(async (doc) => {
+                const click_count = await getShortUrlClickCount(doc.short_id);
+                return {
+                    utm_id: doc.utm_id,
+                    utm_url: doc.utm_url,
+                    utm_campaign_id: doc.utm_campaign_id,
+                    utm_campaign_name: doc.utm_campaign_name,
+                    utm_content: doc.utm_content,
+                    utm_term: doc.utm_term,
+                    utm_memo: doc.utm_memo,
+                    full_url: doc.full_url,
+                    shorten_url: doc.shorten_url,
+                    click_count,
+                    utm_medium_name: doc.utm_medium_name.medium_name,
+                    utm_source_name: doc.utm_source_name.source_name,
+                    created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
+                };
+            })
+        );
         res.status(200).json(result);
     } catch (err) {
         console.error(err);
@@ -170,7 +172,7 @@ export async function getExternalUtmController(req, res, next) {
         };
 
         const [baseUrl, utmResources] = utm_url.split('?');
-        doc['utm_url'] = baseUrl
+        doc['utm_url'] = baseUrl;
         const splitResources = utmResources.split('&');
 
         splitResources.forEach((data) => {
