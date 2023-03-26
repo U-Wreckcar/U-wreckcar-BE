@@ -114,16 +114,16 @@ export async function sendEmailController(req, res, next) {
 </head>
 
 <body>
-<div class="container">
-    <div class="image-container">
-        <img src="https://velog.velcdn.com/images/tastekim_/post/035ebb31-ff86-495e-a7a6-65ba041e9318/image.jpg" alt="Service Image">
+<div class="container" style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+    <div class="image-container" style="text-align: center; margin-bottom: 1rem;">
+        <img src="https://velog.velcdn.com/images/tastekim_/post/035ebb31-ff86-495e-a7a6-65ba041e9318/image.jpg" alt="Service Image" style="max-width: 100%; height: auto;">
     </div>
-    <h1>유렉카 서비스를 이용해주셔서 감사합니다!</h1>
-    <p>Dear [Name],</p>
-    <p>We are excited to welcome you to our mailing list! You will now receive our latest news, promotions, and updates. We promise to keep your inbox interesting and not spammy.</p>
-    <p> 인증 코드 : ${verificationCode}<a href="#">contact us</a>.</p>
-    <a href="https://utm.works" class="button">Explore our website</a>
-    <p class="footer">Best regards,<br>The [Your Company] Team<br> © 2023 [Your Company] All rights reserved.</p>
+    <h1 style="font-weight: normal; margin-bottom: 0.5rem; color: #222;">유렉카 서비스를 이용해주셔서 감사합니다!</h1>
+    <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">Dear [Name],</p>
+    <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">We are excited to welcome you to our mailing list! You will now receive our latest news, promotions, and updates. We promise to keep your inbox interesting and not spammy.</p>
+    <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">인증 코드 : ${verificationCode}<a href="#" style="color: #0070c0; text-decoration: underline; margin-left: 0.5rem;">contact us</a>.</p>
+    <a href="https://utm.works" class="button" style="display: inline-block; background-color: #0070c0; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 1rem;">Explore our website</a>
+    <p class="footer" style="margin-top: 2rem; text-align: center; color: #888;">Best regards,<br>The [Your Company] Team<br> © 2023 [Your Company] All rights reserved.</p>
 </div>
 </body>
 </html>
