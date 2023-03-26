@@ -30,14 +30,5 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
 router.post('/api/users/signup', asyncWrapper(signupForCompanyController));
 router.post('/api/users/email', asyncWrapper(sendEmailController));
-router.post('/test', (req, res) => {
-    const {acc, ref} = req.body;
-    console.log(jwtService.validateAccessToken(acc))
-    console.log(jwtService.validateRefreshToken(ref))
-    console.log(jwtService.getTokenPayload(acc))
-    console.log(jwtService.getTokenPayload(ref))
-
-
-})
 
 export { router };
