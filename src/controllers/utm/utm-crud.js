@@ -74,7 +74,7 @@ export async function deleteUtmController(req, res, next) {
             deleteData.map(async (utm) => {
                 try {
                     const result = await deleteUtm(utm.utm_id);
-                    await deleteShortUrl(utm.short_id);
+                    await deleteShortUrl(utm.shorten_url);
                     return result;
                 } catch (err) {
                     console.error(err);
