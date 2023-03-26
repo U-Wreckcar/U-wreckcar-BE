@@ -38,3 +38,26 @@ export async function findUserData(userData) {
         return err;
     }
 }
+
+export async function createCompanyUser(userData) {
+    try {
+        const dupCheck = await db.Users.findOne({ where: { email: userData.email } });
+        if(dupCheck) {
+            return false;
+        } else {
+            const result = await db.Users.create({
+                username: userData.username,
+                profile_img: '-',
+                email: userData.email,
+                phone_no: userData.phone_no,
+                password: userData.password,
+                company_name: userData.company_name,
+                marketing_accept: userData.marketing_accept,
+            });
+            return result.dataValues;
+        }
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+}

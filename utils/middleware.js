@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { findUserData } from '../src/modules/user.module.js';
+import jwtService from '../src/modules/jwt.module.js';
 
 export async function authenticate(req, res, next) {
     const accessToken = req.headers.authorization;
@@ -9,10 +10,28 @@ export async function authenticate(req, res, next) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // 세션에 사용자 정보가 있는지 확인하고, 있다면 인증을 건너뛰기 - 매 api 요청마다의 인증 생
+    // 세션에 사용자 정보가 있는지 확인하고, 있다면 인증을 건너뛰기 - 매 api 요청마다의 인증 생략
     if (req.session.user) {
         req.user = req.session.user;
         return next();
+    }
+
+    // uwreckcar 회원가입 유저 authenticate
+    const acc_valify = jwtService.validateAccessToken(accessToken.slice(6));
+    const ref_valify = jwtService.validateRefreshToken(refreshToken.slice(6));
+
+    if (acc_valify) {
+        const userData = jwtService.getTokenPayload(accessToken.slice(6));
+        req.user = userData;
+        req.session.user = userData;
+        next();
+    } else if (ref_valify) {
+        const userData = jwtService.getTokenPayload(refreshToken.slice(6));
+        req.user = userData;
+        req.session.user = userData;
+        const newAccessToken = jwtService.createAccessToken(userData);
+        res.cookie('access_token', newAccessToken, { secure: false });
+        next();
     }
 
     try {

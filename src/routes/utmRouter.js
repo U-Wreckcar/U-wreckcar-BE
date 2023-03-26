@@ -4,14 +4,18 @@ import { exportDataToExcel } from '../controllers/utm/exportDataToExcel.js';
 import { exportDataToCsv } from '../controllers/utm/exportDataToCsv.js';
 import {
     createUtmController,
-    deleteUtmController, exportExcelFileController,
+    deleteUtmController,
+    exportExcelFileController,
     getAllUtmsController,
     getExternalUtmController,
 } from '../controllers/utm/utm-crud.js';
 import { utmFilters } from '../controllers/utm/utmFilter.js';
 import { utmMemo } from '../controllers/utm/utmMemo.js';
 import { file_download } from '../controllers/utm/fileDownload.js';
-import {exportCSVFileController} from '../controllers/utm/utm-crud.js';
+import { exportCSVFileController } from '../controllers/utm/utm-crud.js';
+import multer from 'multer';
+import xlsx from 'xlsx';
+const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
 
@@ -23,12 +27,27 @@ router.patch('/api/utms/memo', asyncWrapper(utmMemo));
 router.post('/api/utms/export/filedown', asyncWrapper(file_download));
 // UTM 관련
 router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
-// router.delete('/api/utms/:target', authenticate, asyncWrapper(deleteUtmController));
 router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));
 router.post('/api/utms', authenticate, asyncWrapper(createUtmController));
 router.post('/api/utms/external', authenticate, asyncWrapper(getExternalUtmController));
 router.get('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
-router.post('/api/utms/toxlsx', authenticate, asyncWrapper(exportExcelFileController))
-router.get('/api/utms/topdf')
+router.post('/api/utms/toxlsx', authenticate, asyncWrapper(exportExcelFileController));
+
+// 파일 import 테스트 중
+router.post('/test', upload.any(), async (req, res) => {
+    const data = req.files[0];
+    console.log(req.files[0].filename); // 이걸로 데이터 저장 후 서버에 남지 않게 다시 삭제할 때 찾아서 쓰면될듯, 아니면 filepath 하면 경로랑 이름 붙어서 다나옴
+    function parseExcel(file) {
+        const workbook = xlsx.readFile(file.path);
+        const sheet_name_list = workbook.SheetNames;
+        const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+        return data;
+    }
+
+    const parseData = parseExcel(data);
+    console.log(parseData)
+    // 내용
+    // 쇼튼 없으면 주어진 utm 링크로 만들어주기? 각 칼럼명이 지정한 칼럼명으로 변경되었는지 확인? 그 외 없는 칼럼은 버리도록?
+});
 
 export { router };

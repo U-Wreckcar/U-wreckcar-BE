@@ -4,6 +4,8 @@ import { asyncWrapper, authenticate } from '../../utils/middleware.js';
 import { getUserProfile } from '../controllers/user/getUserProfile.js';
 import { kakaoLogin, kakaoCallback } from '../config/kakaoStrategy.js';
 import { alreadyExists } from '../modules/user.module.js';
+import jwtService from '../modules/jwt.module.js'
+import {sendEmailController, signupForCompanyController} from '../controllers/user/companySignup.js';
 
 const router = express.Router();
 
@@ -26,6 +28,7 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 
 // 회원
 router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
-router.post('/api/users/profile', () => {});
+router.post('/api/users/signup', asyncWrapper(signupForCompanyController));
+router.post('/api/users/email', asyncWrapper(sendEmailController));
 
 export { router };

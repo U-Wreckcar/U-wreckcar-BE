@@ -2,6 +2,10 @@
   "name": "u-wreckcar-be",
   "version": "1.0.0",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/U-Wreckcar/U-wreckcar-BE.git"
+  },
   "main": "app.js",
   "scripts": {
     "lint": "eslint --fix .",
@@ -27,8 +31,10 @@
     "helmet": "^6.0.1",
     "ioredis": "^5.3.1",
     "json-as-xlsx": "^2.5.3",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.1.0",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.1.2",
     "nanoid": "^4.0.1",

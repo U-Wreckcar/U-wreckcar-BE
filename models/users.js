@@ -21,13 +21,22 @@ const Users = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            password: {
+                type: DataTypes.STRING,
+            },
+            company_name: {
+                type: DataTypes.STRING,
+            },
+            marketing_accept: {
+                type: DataTypes.BOOLEAN,
+            },
         },
         {
             sequelize,
             modelName: 'Users',
             tableName: 'Users',
-            createdAt : "created_at",
-            updatedAt : "updated_at",
+            createdAt: 'created_at',
+            updatedAt: 'updated_at',
             timestamps: true,
         }
     );
