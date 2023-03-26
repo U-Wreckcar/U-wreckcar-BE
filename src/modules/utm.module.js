@@ -84,11 +84,10 @@ export async function createUtm(user_id, inputVal) {
             full_url += `&utm_content=${utm_content}`;
         }
 
-        // const shorten_url = await cuttly.shortenUrl(process.env.CUTTLY_KEY, full_url);
-
+        const short_id = nanoid(10);
         const axiosResponse = await axios.post('https://li.urcurly.site/rd', {
             full_url,
-            id: nanoid(10),
+            id: short_id,
         });
         const shorten_url = axiosResponse.data?.shortUrl;
         if (shorten_url === undefined) {
@@ -107,6 +106,7 @@ export async function createUtm(user_id, inputVal) {
             user_id,
             full_url,
             shorten_url: shorten_url || '-',
+            short_id,
             created_at: created_at || Date.now(),
         });
 
@@ -121,7 +121,7 @@ export async function createUtm(user_id, inputVal) {
 export async function deleteUtm(utm_id) {
     try {
         const result = await db.Utms.destroy({ where: { utm_id } });
-        return result ? { success: true } : new Error(`invalid utm_id : ${utm_id}`);
+        return result ? { error: false } : new Error(`invalid utm_id : ${utm_id}`);
     } catch (err) {
         console.error(err);
         return err;
