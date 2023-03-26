@@ -2,6 +2,10 @@
   "name": "u-wreckcar-be",
   "version": "1.0.0",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/U-Wreckcar/U-wreckcar-BE.git"
+  },
   "main": "app.js",
   "scripts": {
     "lint": "eslint --fix .",
