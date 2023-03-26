@@ -11,7 +11,7 @@ import config from '../../config/dbconfig.js';
 import Papa from 'papaparse';
 import fs from 'fs';
 import path from 'path';
-import { getShortUrlClickCount } from '../../modules/mongo.module.js';
+import { getShortUrlClickCount, deleteShortUrl } from '../../modules/mongo.module.js';
 const __dirname = path.resolve();
 
 export async function createUtmController(req, res, next) {
@@ -74,6 +74,7 @@ export async function deleteUtmController(req, res, next) {
             deleteData.map(async (utm) => {
                 try {
                     const result = await deleteUtm(utm.utm_id);
+                    await deleteShortUrl(utm.short_id);
                     return result;
                 } catch (err) {
                     console.error(err);
