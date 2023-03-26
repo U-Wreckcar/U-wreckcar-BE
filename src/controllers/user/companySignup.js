@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 export async function signupForCompanyController(req, res, next) {
     try {
         const userData = await createCompanyUser(req.body['data']);
-        console.log(req.body['data'])
+        console.log(req.body['data']);
         if (!userData) {
             res.status(400).json({
                 success: false,
@@ -29,29 +29,24 @@ export async function sendEmailController(req, res, next) {
         const { email } = req.body.data;
         const verificationCode = nanoid(6);
         const mailOptions = {
-            from: `${process.env.NODEMAILER_ACCOUNT}`,
+            from: `${process.env.NODEMAILER_ACCOUNT}@naver.com`,
             to: email,
             subject: 'U렉카 회원가입 인증 안내 입니다.',
             text: `인증 코드는 ${verificationCode} 입니다.`,
         };
-        const result = await transporter.sendMail(mailOptions,(err, res) => {
+        const result = await transporter.sendMail(mailOptions, (err, res) => {
             if (err) {
-                console.error('send mail failed');
-                return false;
+                console.log(err);
+                throw new Error(err.message);
             } else {
                 console.log('send mail success');
                 return true;
             }
         });
-        if (!result) {
-            res.status(500).json({
-                message: 'send mail failed',
-            })
-        } else {
-            res.status(200).json({
-                verificationCode,
-            });
-        }
+
+        res.status(200).json({
+            verificationCode,
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: err.message });
