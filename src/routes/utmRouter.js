@@ -30,7 +30,7 @@ router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
 router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));
 router.post('/api/utms', authenticate, asyncWrapper(createUtmController));
 router.post('/api/utms/external', authenticate, asyncWrapper(getExternalUtmController));
-router.get('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
+router.post('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
 router.post('/api/utms/toxlsx', authenticate, asyncWrapper(exportExcelFileController));
 
 // 파일 import 테스트 중
