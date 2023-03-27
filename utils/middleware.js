@@ -24,14 +24,14 @@ export async function authenticate(req, res, next) {
         const userData = jwtService.getTokenPayload(accessToken.slice(6));
         req.user = userData;
         req.session.user = userData;
-        next();
+        return next();
     } else if (ref_valify) {
         const userData = jwtService.getTokenPayload(refreshToken.slice(6));
         req.user = userData;
         req.session.user = userData;
         const newAccessToken = jwtService.createAccessToken(userData);
         res.cookie('access_token', newAccessToken, { secure: false });
-        next();
+        return next();
     }
 
     try {
