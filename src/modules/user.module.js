@@ -1,5 +1,6 @@
 import db from '../../models/index.js';
 import { re } from '@babel/core/lib/vendor/import-meta-resolve.js';
+import crypto from 'crypto';
 
 export async function alreadyExists(userData) {
     try {
@@ -39,20 +40,27 @@ export async function findUserData(userData) {
     }
 }
 
-export async function createCompanyUser(userData) {
+export async function createCompanyUser(
+    username,
+    email,
+    password,
+    salt,
+    company_name,
+    marketing_accept
+) {
     try {
-        const dupCheck = await db.Users.findOne({ where: { email: userData.email } });
-        if(dupCheck) {
+        const dupCheck = await db.Users.findOne({ where: { email } });
+        if (dupCheck) {
             return false;
         } else {
             const result = await db.Users.create({
-                username: userData.username,
+                username,
                 profile_img: '-',
-                email: userData.email,
-                phone_no: userData.phone_no,
-                password: userData.password,
-                company_name: userData.company_name,
-                marketing_accept: userData.marketing_accept,
+                email,
+                password,
+                salt,
+                company_name,
+                marketing_accept,
             });
             return result.dataValues;
         }
@@ -61,3 +69,62 @@ export async function createCompanyUser(userData) {
         return err;
     }
 }
+
+export async function findCompanyUserData(email) {
+    try {
+        const checkUser = await db.Users.findOne({ where: { email } });
+        return checkUser ? checkUser.dataValues : false;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+}
+
+export async function createSalt() {
+    try {
+        const salt = await crypto.randomBytes(64);
+        return salt.toString('base64');
+    } catch (err) {
+        console.log(
+            `====================user.module.js/createSalt Error.=============================`
+        );
+        if (err instanceof Error) {
+            return err;
+        }
+    }
+}
+
+export const createHashedPassword = (plainPassword) =>
+    new Promise(async (resolve, reject) => {
+        const salt = await createSalt();
+        if (!salt || salt instanceof Error) {
+            reject(new Error('failed to create salt'));
+        } else {
+            crypto.pbkdf2(plainPassword, salt, 999, 64, 'sha512', (err, key) => {
+                if (err) reject(err);
+                resolve({ password: key.toString('base64'), salt });
+            });
+        }
+    });
+
+export const getHashedPassword = (plainPassword, salt) =>
+    new Promise(async (resolve, reject) => {
+        crypto.pbkdf2(plainPassword, salt, 999, 64, 'sha512', (err, key) => {
+            if (err) reject(err);
+            resolve({ password: key.toString('base64'), salt });
+        });
+    });
+
+// export async function makePasswordHashed(email, plainPassword) {
+//     try {
+//         const hashed = await createHashedPassword(plainPassword);
+//         return hashed;
+//     } catch (err) {
+//         console.error(
+//             `====================user.moudule.js/makePasswordHashed Error.=============================`
+//         );
+//         if (err instanceof Error) {
+//             return err;
+//         }
+//     }
+// }

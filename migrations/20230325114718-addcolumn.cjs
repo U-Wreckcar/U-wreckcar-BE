@@ -9,6 +9,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        return queryInterface.removeColumn('Utms', 'short_id');
+        // return queryInterface.removeColumn('Utms', 'short_id');
     },
 };
