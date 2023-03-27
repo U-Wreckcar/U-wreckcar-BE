@@ -15,6 +15,8 @@ import { file_download } from '../controllers/utm/fileDownload.js';
 import { exportCSVFileController } from '../controllers/utm/utm-crud.js';
 import multer from 'multer';
 import xlsx from 'xlsx';
+import { getUtmSources } from '../controllers/utm/utmSourceTags.js';
+import { getUtmMediums } from '../controllers/utm/utmMediumTags.js';
 const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
@@ -25,6 +27,8 @@ router.post('/api/utms/export/excell', asyncWrapper(exportDataToExcel));
 router.post('/api/utms/filter', asyncWrapper(utmFilters));
 router.patch('/api/utms/memo', asyncWrapper(utmMemo));
 router.post('/api/utms/export/filedown', asyncWrapper(file_download));
+router.get('/api/utms/tag/source', authenticate, asyncWrapper(getUtmSources));
+router.get('/api/utms/tag/medium', authenticate, asyncWrapper(getUtmMediums));
 // UTM 관련
 router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
 router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));
