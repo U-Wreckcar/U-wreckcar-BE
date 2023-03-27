@@ -34,7 +34,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y rsync
         rsync -avz --exclude='.git*' --exclude='.env' --exclude='.github' . ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ secrets.REMOTE_DIRECTORY }}
-        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "cd ${{ secrets.REMOTE_DIRECTORY }} && npm install && npx pm2 restart app.js -i max"
+        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "cd ${{ secrets.REMOTE_DIRECTORY }} && npm install && npx pm2 restart ecosystem.config.js"
       env:
         USERNAME: ${{ secrets.USERNAME }}
         REMOTE_DIRECTORY: ${{ secrets.REMOTE_DIRECTORY }}
