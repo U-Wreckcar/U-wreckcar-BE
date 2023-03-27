@@ -10,7 +10,7 @@ export async function signupForCompanyController(req, res, next) {
         if (!userData) {
             res.status(400).json({
                 success: false,
-                message: `Already signed up for ${req.body.email}`,
+                message: `Already signed up for ${req.body['data'].email}`,
             });
         } else {
             const access_token = jwtService.createAccessToken(userData);
