@@ -115,6 +115,6 @@ app.use('error', (err, req, res, next) => {
 });
 
 app.listen(process.env.SERVER_PORT, () => {
-    process.send('ready');
+    // process.send('ready');
     console.log(`Server is listening on ${process.env.SERVER}`);
 });

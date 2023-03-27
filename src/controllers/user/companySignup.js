@@ -1,22 +1,40 @@
 import jwtService from '../../modules/jwt.module.js';
-import { createCompanyUser } from '../../modules/user.module.js';
+import {
+    createCompanyUser,
+    createHashedPassword,
+    findCompanyUserData,
+    getHashedPassword,
+} from '../../modules/user.module.js';
 import transporter from '../../config/nodemailer.config.js';
 import { nanoid } from 'nanoid';
 
 export async function signupForCompanyController(req, res, next) {
     try {
-        const userData = await createCompanyUser(req.body['data']);
-        console.log(req.body['data']);
+        const { email, password, company_name, marketing_accept, username } = req.body.data;
+
+        const hashPassword = await createHashedPassword(password);
+        const userData = await createCompanyUser(
+            username,
+            email,
+            hashPassword.password,
+            hashPassword.salt,
+            company_name,
+            marketing_accept
+        );
         if (!userData) {
             res.status(400).json({
                 success: false,
-                message: `Already signed up for ${req.body['data'].email}`,
+                message: `Already signed up for ${email}`,
             });
         } else {
-            const access_token = jwtService.createAccessToken(userData);
-            const refresh_token = jwtService.createRefreshToken(userData);
-
-            res.status(200).send({ userData, access_token, refresh_token });
+            res.status(200).json({
+                user_id: userData.user_id,
+                username: userData.username,
+                email: userData.email,
+                profile_img: userData.profile_img,
+                company_name: userData.company_name,
+                marketing_accept: userData.marketing_accept,
+            });
         }
     } catch (err) {
         console.error(err);
@@ -119,10 +137,12 @@ export async function sendEmailController(req, res, next) {
         <img src="https://velog.velcdn.com/images/tastekim_/post/035ebb31-ff86-495e-a7a6-65ba041e9318/image.jpg" alt="Service Image" style="max-width: 100%; height: auto;">
     </div>
     <h1 style="font-weight: normal; margin-bottom: 0.5rem; color: #222;">유렉카 서비스를 이용해주셔서 감사합니다!</h1>
-    <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">${email.split('@')[0]} 님,</p>
+    <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">${
+        email.split('@')[0]
+    } 님,</p>
     <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">아래 인증 코드를 가지고 이메일 인증을 완료해주세요.</p>
      <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">* 한 번 사용된 메일은 재사용 할 수 없습니다. 인증을 받으신 후 메일을 삭제해주세요.</p>
-    <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">인증 코드 : ${verificationCode}<a href="#" style="color: #0070c0; text-decoration: underline; margin-left: 0.5rem;">contact us</a>.</p>
+    <p style="margin-bottom: 1rem; color: #444; font-size: 18px; line-height: 1.4;">인증 코드 : ${verificationCode}</p>
     <a href="https://utm.works" class="button" style="display: inline-block; background-color: #0070c0; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 1rem;">Explore our website</a>
     <p class="footer" style="margin-top: 2rem; text-align: center; color: #888;">Best regards,<br>Team 유렉카<br> © 2023 유렉카 All rights reserved.</p>
 </div>
@@ -144,6 +164,43 @@ export async function sendEmailController(req, res, next) {
         res.status(200).json({
             verificationCode,
         });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+}
+
+export async function signinForCompanyController(req, res, next) {
+    try {
+        const { email, password } = req.body.data;
+        const userData = await findCompanyUserData(email);
+
+        if (!userData) {
+            throw new Error(`Couldn't find user ${email}`);
+        }
+
+        const inputPassword = await getHashedPassword(password, userData.salt);
+        if (userData.password === inputPassword.password) {
+            const access_token = jwtService.createAccessToken(userData);
+            const refresh_token = jwtService.createRefreshToken(userData);
+            res.status(200).json({
+                userData: {
+                    user_id: userData.user_id,
+                    username: userData.username,
+                    email: userData.email,
+                    profile_img: userData.profile_img,
+                    company_name: userData.company_name,
+                    marketing_accept: userData.marketing_accept,
+                },
+                access_token,
+                refresh_token,
+            });
+        } else {
+            res.status(401).json({
+                success: false,
+                message: `Invalid password.`,
+            });
+        }
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: err.message });

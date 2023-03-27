@@ -4,9 +4,6 @@
 module.exports = {
     async up(queryInterface, Sequelize) {
         return [
-            queryInterface.addColumn('Users', 'phone_no', {
-                type: Sequelize.STRING,
-            }),
             queryInterface.addColumn('Users', 'password', {
                 type: Sequelize.STRING,
             }),
@@ -16,15 +13,18 @@ module.exports = {
             queryInterface.addColumn('Users', 'marketing_accept', {
                 type: Sequelize.BOOLEAN,
             }),
+            queryInterface.addColumn('Users', 'salt', {
+                type: Sequelize.STRING,
+            }),
         ];
     },
 
     async down(queryInterface, Sequelize) {
         return [
-            queryInterface.removeColumn('Users', 'phone_no'),
             queryInterface.removeColumn('Users', 'password'),
             queryInterface.removeColumn('Users', 'company_name'),
             queryInterface.removeColumn('Users', 'marketing_accept'),
+            queryInterface.removeColumn('Users', 'salt'),
         ];
     },
 };

@@ -24,14 +24,14 @@ const Users = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.STRING,
             },
+            salt: {
+                type: DataTypes.STRING,
+            },
             company_name: {
                 type: DataTypes.STRING,
             },
             marketing_accept: {
                 type: DataTypes.BOOLEAN,
-            },
-            phone_no: {
-                type: DataTypes.STRING,
             },
         },
         {
