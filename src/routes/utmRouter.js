@@ -17,6 +17,7 @@ import multer from 'multer';
 import xlsx from 'xlsx';
 import { getUtmSources } from '../controllers/utm/utmSourceTags.js';
 import { getUtmMediums } from '../controllers/utm/utmMediumTags.js';
+import { TrialversionCreateUtmController } from '../controllers/utm/utm-crud.js';
 const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
@@ -27,8 +28,9 @@ router.post('/api/utms/export/excell', asyncWrapper(exportDataToExcel));
 router.post('/api/utms/filter', asyncWrapper(utmFilters));
 router.patch('/api/utms/memo', asyncWrapper(utmMemo));
 router.post('/api/utms/export/filedown', asyncWrapper(file_download));
-router.get('/api/utms/tag/source', authenticate, asyncWrapper(getUtmSources));
-router.get('/api/utms/tag/medium', authenticate, asyncWrapper(getUtmMediums));
+router.get('/api/utms/tag/source', asyncWrapper(getUtmSources));
+router.get('/api/utms/tag/medium', asyncWrapper(getUtmMediums));
+router.post('/api/utms/trialversion', asyncWrapper(TrialversionCreateUtmController));
 // UTM 관련
 router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
 router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));

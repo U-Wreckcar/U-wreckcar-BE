@@ -67,6 +67,58 @@ export async function createUtmController(req, res, next) {
     }
 }
 
+export async function TrialversionCreateUtmController(req, res, next) {
+    try {
+        const user_id = 99999;
+        const requirements = ['utm_source', 'utm_medium', 'utm_campaign_name', 'utm_url'];
+        const utmsData = req.body.utms;
+        // requirements Validation.
+        Object.keys(req.body).forEach((key) => {
+            if (!req.body[key] && requirements.includes(user_id, key)) {
+                throw new Error(`Invalid ${key} value.`);
+            }
+        });
+
+        // map 이 전부 끝날때까지 대기.
+        const result = await Promise.all(
+            utmsData.map(async (doc) => {
+                try {
+                    const result = await createUtm(user_id, doc);
+                    // 성공 시 생성된 객체의 데이터 return
+                    return {
+                        utm_id: result.utm_id,
+                        full_url: result.full_url,
+                        shorten_url: result.shorten_url,
+                    };
+                } catch (err) {
+                    console.error(err);
+                    // 실패 시 에러 객체 return
+                    return {
+                        error: true,
+                        message: err.message,
+                        stack: err.stack,
+                    };
+                }
+            })
+        );
+
+        // 에러 객체 여부 확인 후 존재하면 status 500 으로 response
+        const hasError = result.some((item) => item.error);
+
+        if (hasError) {
+            res.status(500).json(result);
+        } else {
+            res.status(200).json(result);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: err.message,
+            stack: err.stack,
+        });
+    }
+}
+
 export async function deleteUtmController(req, res, next) {
     try {
         const deleteData = req.body.data;
