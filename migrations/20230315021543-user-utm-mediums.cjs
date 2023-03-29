@@ -10,15 +10,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'user_id',
-        },
-        onDelete: 'CASCADE',
-      },
+      // user_id: {
+      //   allowNull: false,
+      //   type: Sequelize.INTEGER,
+      //   references: {
+      //     model: 'Users',
+      //     key: 'user_id',
+      //   },
+      //   onDelete: 'CASCADE',
+      // },
       medium_name: {
         allowNull: false,
         type: Sequelize.STRING,
