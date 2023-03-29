@@ -7,6 +7,7 @@ import {
 } from '../../modules/user.module.js';
 import transporter from '../../config/nodemailer.config.js';
 import { nanoid } from 'nanoid';
+import redisClient from '../../config/redis.config.js';
 
 export async function signupForCompanyController(req, res, next) {
     try {
@@ -53,7 +54,8 @@ export async function sendEmailController(req, res, next) {
             });
         } else {
             const verificationCode = nanoid(6);
-
+            await redisClient.set(`${email}`, verificationCode);
+            await redisClient.expire(`${email}`, 3 * 60);
             const mailOptions = {
                 from: `${process.env.NODEMAILER_ACCOUNT}@naver.com`,
                 to: email,
@@ -169,7 +171,29 @@ export async function sendEmailController(req, res, next) {
             });
 
             res.status(200).json({
-                verificationCode,
+                success: true,
+                message: 'Send mail successfully.'
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+}
+
+export async function validateEmailController(req, res, next) {
+    try {
+        const { email, verificationCode } = req.body.data;
+        const verificationCode_fact = await redisClient.get(`${email}`);
+        if (verificationCode_fact === verificationCode) {
+            res.status(200).json({
+                success: true,
+                message: 'Email verified',
+            });
+        } else {
+            res.status(401).json({
+                success: false,
+                message: 'Email verified failed.',
             });
         }
     } catch (err) {
