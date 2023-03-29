@@ -184,11 +184,6 @@ export async function signinForCompanyController(req, res, next) {
         const userData = await findCompanyUserData(email);
 
         if (userData !== false) {
-            res.status(404).json({
-                success: false,
-                message: `Couldn't find user ${email}`,
-            });
-        } else {
             const inputPassword = await getHashedPassword(password, userData.salt);
             if (userData.password === inputPassword.password) {
                 const access_token = jwtService.createAccessToken(userData);
@@ -211,6 +206,11 @@ export async function signinForCompanyController(req, res, next) {
                     message: `Invalid password.`,
                 });
             }
+        } else {
+            res.status(404).json({
+                success: false,
+                message: `Couldn't find user ${email}`,
+            });
         }
     } catch (err) {
         console.error(err);

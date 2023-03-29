@@ -36,6 +36,9 @@ module.exports = {
                     type: Sequelize.BOOLEAN,
                     defaultValue: false,
                 },
+                login_type: {
+                    type: Sequelize.STRING,
+                },
                 created_at: {
                     allowNull: false,
                     type: Sequelize.DATE(6),
