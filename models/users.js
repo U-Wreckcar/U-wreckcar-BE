@@ -33,6 +33,9 @@ const Users = (sequelize, DataTypes) => {
             marketing_accept: {
                 type: DataTypes.BOOLEAN,
             },
+            login_type: {
+                type: DataTypes.STRING,
+            },
         },
         {
             sequelize,
