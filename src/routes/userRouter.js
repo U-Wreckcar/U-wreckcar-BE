@@ -20,7 +20,8 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
         console.log('RefreshToken : ', refresh_token);
 
         // 기존 회원 확인 후 새로 가입.
-        await alreadyExists(user);
+        const existCheck = await alreadyExists(user);
+        if (existCheck)
         res.status(200).send({ access_token: access_token, refresh_token: refresh_token });
     } catch (err) {
         console.error(err);

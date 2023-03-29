@@ -45,13 +45,20 @@ export async function signupForCompanyController(req, res, next) {
 export async function sendEmailController(req, res, next) {
     try {
         const { email } = req.body.data;
-        const verificationCode = nanoid(6);
+        const dupCheck = await findCompanyUserData(email);
+        if (dupCheck !== false) {
+            res.status(403).json({
+                success: false,
+                message: 'Email already exists.',
+            });
+        } else {
+            const verificationCode = nanoid(6);
 
-        const mailOptions = {
-            from: `${process.env.NODEMAILER_ACCOUNT}@naver.com`,
-            to: email,
-            subject: 'U렉카 회원가입 인증 안내 입니다.',
-            html: `
+            const mailOptions = {
+                from: `${process.env.NODEMAILER_ACCOUNT}@naver.com`,
+                to: email,
+                subject: 'U렉카 회원가입 인증 안내 입니다.',
+                html: `
             <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -149,21 +156,22 @@ export async function sendEmailController(req, res, next) {
 </body>
 </html>
 `,
-        };
+            };
 
-        await transporter.sendMail(mailOptions, (err, res) => {
-            if (err) {
-                console.log(err);
-                throw new Error(err.message);
-            } else {
-                console.log('send mail success');
-                return true;
-            }
-        });
+            await transporter.sendMail(mailOptions, (err, res) => {
+                if (err) {
+                    console.log(err);
+                    throw new Error(err.message);
+                } else {
+                    console.log('send mail success');
+                    return true;
+                }
+            });
 
-        res.status(200).json({
-            verificationCode,
-        });
+            res.status(200).json({
+                verificationCode,
+            });
+        }
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: err.message });
@@ -175,31 +183,34 @@ export async function signinForCompanyController(req, res, next) {
         const { email, password } = req.body.data;
         const userData = await findCompanyUserData(email);
 
-        if (!userData) {
-            throw new Error(`Couldn't find user ${email}`);
-        }
-
-        const inputPassword = await getHashedPassword(password, userData.salt);
-        if (userData.password === inputPassword.password) {
-            const access_token = jwtService.createAccessToken(userData);
-            const refresh_token = jwtService.createRefreshToken(userData);
-            res.status(200).json({
-                userData: {
-                    user_id: userData.user_id,
-                    username: userData.username,
-                    email: userData.email,
-                    profile_img: userData.profile_img,
-                    company_name: userData.company_name,
-                    marketing_accept: userData.marketing_accept,
-                },
-                access_token,
-                refresh_token,
+        if (userData !== false) {
+            res.status(404).json({
+                success: false,
+                message: `Couldn't find user ${email}`,
             });
         } else {
-            res.status(401).json({
-                success: false,
-                message: `Invalid password.`,
-            });
+            const inputPassword = await getHashedPassword(password, userData.salt);
+            if (userData.password === inputPassword.password) {
+                const access_token = jwtService.createAccessToken(userData);
+                const refresh_token = jwtService.createRefreshToken(userData);
+                res.status(200).json({
+                    userData: {
+                        user_id: userData.user_id,
+                        username: userData.username,
+                        email: userData.email,
+                        profile_img: userData.profile_img,
+                        company_name: userData.company_name,
+                        marketing_accept: userData.marketing_accept,
+                    },
+                    access_token,
+                    refresh_token,
+                });
+            } else {
+                res.status(401).json({
+                    success: false,
+                    message: `Invalid password.`,
+                });
+            }
         }
     } catch (err) {
         console.error(err);
