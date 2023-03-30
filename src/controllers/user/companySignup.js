@@ -185,6 +185,10 @@ export async function validateEmailController(req, res, next) {
     try {
         const { email, verificationCode } = req.body.data;
         const verificationCode_fact = await redisClient.get(`${email}`);
+        console.log('email : ', email)
+        console.log('fact : ', verificationCode_fact)
+        console.log('user : ', verificationCode)
+
         if (verificationCode_fact === verificationCode) {
             res.status(200).json({
                 success: true,
