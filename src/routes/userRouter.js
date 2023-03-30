@@ -6,7 +6,7 @@ import { alreadyExists } from '../modules/user.module.js';
 import {
     sendEmailController,
     signupForCompanyController,
-    signinForCompanyController,
+    signinForCompanyController, validateEmailController,
 } from '../controllers/user/companySignup.js';
 
 const router = express.Router();
@@ -34,5 +34,6 @@ router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
 router.post('/api/users/signup', asyncWrapper(signupForCompanyController));
 router.post('/api/users/login', asyncWrapper(signinForCompanyController));
 router.post('/api/users/email', asyncWrapper(sendEmailController));
+router.post('/api/users/emailverify', asyncWrapper(validateEmailController));
 
 export { router };

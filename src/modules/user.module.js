@@ -15,13 +15,20 @@ export async function alreadyExists(userData) {
                 username: userData.properties.nickname,
                 profile_img: userData.properties.profile_image,
                 email: userData.kakao_account.email,
+                password: '-',
+                salt: '-',
+                company_name: '-',
+                marketing_accept: true,
+                login_type: 'kakao',
             });
             return result.dataValues;
         } else {
             return checkDuplicate;
         }
     } catch (err) {
-        console.error(err);
+        console.error(
+            `====================user.module.js/alreadyExists Error.=============================`
+        );
         return err;
     }
 }
@@ -35,7 +42,9 @@ export async function findUserData(userData) {
         });
         return checkUser ? checkUser.dataValues : false;
     } catch (err) {
-        console.error(err);
+        console.error(
+            `====================user.module.js/findUserData Error.=============================`
+        );
         return err;
     }
 }
@@ -55,17 +64,21 @@ export async function createCompanyUser(
         } else {
             const result = await db.Users.create({
                 username,
-                profile_img: '-',
+                profile_img:
+                    'https://velog.velcdn.com/images/tastekim_/post/60f96a34-2142-43fe-b109-9312af658a3d/image.png',
                 email,
                 password,
                 salt,
                 company_name,
                 marketing_accept,
+                login_type: 'uwreckcar',
             });
             return result.dataValues;
         }
     } catch (err) {
-        console.error(err);
+        console.error(
+            `====================user.module.js/createCompanyUser Error.=============================`
+        );
         return err;
     }
 }
@@ -75,7 +88,9 @@ export async function findCompanyUserData(email) {
         const checkUser = await db.Users.findOne({ where: { email } });
         return checkUser ? checkUser.dataValues : false;
     } catch (err) {
-        console.error(err);
+        console.error(
+            `====================user.module.js/findCompanyUserData Error.=============================`
+        );
         return err;
     }
 }
