@@ -24,13 +24,16 @@ const Users = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.STRING,
             },
+            salt: {
+                type: DataTypes.STRING,
+            },
             company_name: {
                 type: DataTypes.STRING,
             },
             marketing_accept: {
                 type: DataTypes.BOOLEAN,
             },
-            phone_no: {
+            login_type: {
                 type: DataTypes.STRING,
             },
         },
@@ -44,14 +47,14 @@ const Users = (sequelize, DataTypes) => {
         }
     );
     Users.associate = (db) => {
-        db.Users.hasMany(db.User_utm_mediums, {
-            foreignKey: 'user_id',
-            sourceKey: 'user_id',
-        });
-        db.Users.hasMany(db.User_utm_sources, {
-            foreignKey: 'user_id',
-            sourceKey: 'user_id',
-        });
+        // db.Users.hasMany(db.User_utm_mediums, {
+        //     foreignKey: 'user_id',
+        //     sourceKey: 'user_id',
+        // });
+        // db.Users.hasMany(db.User_utm_sources, {
+        //     foreignKey: 'user_id',
+        //     sourceKey: 'user_id',
+        // });
         db.Users.hasMany(db.Utms, {
             foreignKey: 'user_id',
             sourceKey: 'user_id',

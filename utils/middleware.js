@@ -17,21 +17,22 @@ export async function authenticate(req, res, next) {
     }
 
     // uwreckcar 회원가입 유저 authenticate
-    const acc_valify = jwtService.validateAccessToken(accessToken.slice(6));
-    const ref_valify = jwtService.validateRefreshToken(refreshToken.slice(6));
+    const acc_valify = jwtService.validateAccessToken(accessToken.split(' ')[1]);
+    const ref_valify = jwtService.validateRefreshToken(refreshToken.split(' ')[1]);
+    console.log(acc_valify);
 
     if (acc_valify) {
-        const userData = jwtService.getTokenPayload(accessToken.slice(6));
+        const userData = jwtService.getTokenPayload(accessToken.split(' ')[1]);
         req.user = userData;
         req.session.user = userData;
-        next();
+        return next();
     } else if (ref_valify) {
-        const userData = jwtService.getTokenPayload(refreshToken.slice(6));
+        const userData = jwtService.getTokenPayload(refreshToken.split(' ')[1]);
         req.user = userData;
         req.session.user = userData;
         const newAccessToken = jwtService.createAccessToken(userData);
         res.cookie('access_token', newAccessToken, { secure: false });
-        next();
+        return next();
     }
 
     try {
@@ -81,6 +82,7 @@ export async function authenticate(req, res, next) {
                 if (!userData) {
                     res.redirect(`${process.env.CLIENT_URL}/login`);
                 }
+                res.cookie();
                 req.user = userData;
                 req.session.user = userData;
                 next();

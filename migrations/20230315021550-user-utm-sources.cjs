@@ -14,15 +14,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      user_id: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'user_id',
-        },
-        onDelete: 'CASCADE',
-      },
+      // user_id: {
+      //   allowNull: false,
+      //   type: Sequelize.INTEGER,
+      //   references: {
+      //     model: 'Users',
+      //     key: 'user_id',
+      //   },
+      //   onDelete: 'CASCADE',
+      // },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE(6),
