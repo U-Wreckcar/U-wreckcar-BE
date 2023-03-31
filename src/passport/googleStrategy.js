@@ -31,6 +31,7 @@ export const googleStrategy = passport.use(
                         email: profile._json.email,
                         username: profile._json.name,
                         profile_img: profile._json.picture,
+                        login_type: 'google',
                         // provider: 'google',
                     });
                     console.log('새롭게 생성된 유저 정보 : ', newUser);
