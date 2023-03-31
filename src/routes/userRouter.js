@@ -4,7 +4,6 @@ import { getUserProfile } from '../controllers/user/getUserProfile.js';
 import { kakaoLogin, kakaoCallback } from '../config/kakaoStrategy.js';
 import { alreadyExists } from '../modules/user.module.js';
 import jwtService from '../modules/jwt.module.js'
-import { sendEmailController, signupForCompanyController } from '../controllers/user/companySignup.js';
 import { googleLoginCheck, googleStrategy } from '../passport/googleStrategy.js';
 import { googleCallback } from '../passport/googleStrategy.js';
 import {
