@@ -125,7 +125,8 @@ export async function authentication(req, res, next) {
         }
 
         const [tokenType, tokenValue] = refreshToken.split(' ');
-        if (tokenType === 'Bearer') {
+
+        if (tokenType !== 'Bearer') {
             return next(new Error(`Invalid token`));
         }
 
