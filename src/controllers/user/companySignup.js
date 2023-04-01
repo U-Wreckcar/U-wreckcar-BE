@@ -172,7 +172,7 @@ export async function sendEmailController(req, res, next) {
 
             res.status(200).json({
                 success: true,
-                message: 'Send mail successfully.'
+                message: 'Send mail successfully.',
             });
         }
     } catch (err) {
@@ -185,9 +185,9 @@ export async function validateEmailController(req, res, next) {
     try {
         const { email, verificationCode } = req.body.data;
         const verificationCode_fact = await redisClient.get(`${email}`);
-        console.log('email : ', email)
-        console.log('fact : ', verificationCode_fact)
-        console.log('user : ', verificationCode)
+        console.log('email : ', email);
+        console.log('fact : ', verificationCode_fact);
+        console.log('user : ', verificationCode);
 
         if (verificationCode_fact === verificationCode) {
             res.status(200).json({
@@ -215,7 +215,7 @@ export async function signinForCompanyController(req, res, next) {
             const inputPassword = await getHashedPassword(password, userData.salt);
             if (userData.password === inputPassword.password) {
                 const access_token = jwtService.createAccessToken(userData);
-                const token = jwtService.createUwreckcarToken(access_token);
+                const refresh_token = jwtService.createRefreshToken(userData);
                 res.status(200).json({
                     userData: {
                         user_id: userData.user_id,
@@ -225,7 +225,8 @@ export async function signinForCompanyController(req, res, next) {
                         company_name: userData.company_name,
                         marketing_accept: userData.marketing_accept,
                     },
-                    token,
+                    access_token,
+                    refresh_token,
                 });
             } else {
                 res.status(401).json({
