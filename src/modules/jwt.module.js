@@ -9,15 +9,32 @@ class jwtService {
         });
     };
     // Refresh Token 생성
-    createRefreshToken = (userData) => {
-        return jwt.sign(userData, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
+    createKakaoToken = (token) => {
+        return jwt.sign({
+            login_type: 'kakao',
+            token,
+        }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
+    };
+
+    createGoogleToken = (token) => {
+        return jwt.sign({
+            login_type: 'google',
+            token
+        }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
+    };
+
+    createUwreckcarToken = (token) => {
+        return jwt.sign({
+            login_type: 'uwreckcar',
+            token
+        }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
     };
 
     getTokenPayload = (token) => {
         try {
             return jwt.verify(token, process.env.JWT_SECRET_KEY);
         } catch (error) {
-            return null;
+            return false;
         }
     };
 

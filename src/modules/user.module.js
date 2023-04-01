@@ -10,7 +10,7 @@ export async function alreadyExists(userData) {
             },
         });
 
-        if (!checkDuplicate) {
+        if (checkDuplicate === null) {
             const result = await db.Users.create({
                 username: userData.properties.nickname,
                 profile_img: userData.properties.profile_image,
@@ -21,9 +21,6 @@ export async function alreadyExists(userData) {
                 marketing_accept: true,
                 login_type: 'kakao',
             });
-            return result.dataValues;
-        } else {
-            return checkDuplicate;
         }
     } catch (err) {
         console.error(

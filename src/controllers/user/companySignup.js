@@ -215,7 +215,7 @@ export async function signinForCompanyController(req, res, next) {
             const inputPassword = await getHashedPassword(password, userData.salt);
             if (userData.password === inputPassword.password) {
                 const access_token = jwtService.createAccessToken(userData);
-                const refresh_token = jwtService.createRefreshToken(userData);
+                const token = jwtService.createUwreckcarToken(access_token);
                 res.status(200).json({
                     userData: {
                         user_id: userData.user_id,
@@ -225,8 +225,7 @@ export async function signinForCompanyController(req, res, next) {
                         company_name: userData.company_name,
                         marketing_accept: userData.marketing_accept,
                     },
-                    access_token,
-                    refresh_token,
+                    token,
                 });
             } else {
                 res.status(401).json({
