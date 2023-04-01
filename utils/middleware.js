@@ -116,7 +116,7 @@ export function asyncWrapper(asyncFn) {
 
 export async function authentication(req, res, next) {
     try {
-        const refreshToken = req.headers['X-Refresh-Token'];
+        const refreshToken = req.headers['x-refresh-token'];
 
         // 세션에 사용자 정보가 있는지 확인하고, 있다면 인증을 건너뛰기 - 매 api 요청마다의 인증 생략
         if (req.session.user) {
