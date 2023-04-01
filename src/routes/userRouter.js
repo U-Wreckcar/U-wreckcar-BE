@@ -3,13 +3,14 @@ import { asyncWrapper, authenticate } from '../../utils/middleware.js';
 import { getUserProfile } from '../controllers/user/getUserProfile.js';
 import { kakaoLogin, kakaoCallback } from '../config/kakaoStrategy.js';
 import { alreadyExists } from '../modules/user.module.js';
-import jwtService from '../modules/jwt.module.js'
+import jwtService from '../modules/jwt.module.js';
 import { googleLoginCheck } from '../passport/googleStrategy.js';
 import { googleCallback } from '../passport/googleStrategy.js';
 import {
     sendEmailController,
     signupForCompanyController,
-    signinForCompanyController, validateEmailController,
+    signinForCompanyController,
+    validateEmailController,
 } from '../controllers/user/companySignup.js';
 const router = express.Router();
 
@@ -22,9 +23,10 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
         console.log('RefreshToken : ', refresh_token);
 
         // 기존 회원 확인 후 새로 가입.
-        const existCheck = await alreadyExists(user);
-        if (existCheck)
-        res.status(200).send({ access_token: access_token, refresh_token: refresh_token });
+        await alreadyExists(user);
+        const token = await jwtService.createKakaoToken(refresh_token);
+
+        res.status(200).send({ token });
     } catch (err) {
         console.error(err);
         res.status(500).send({ errorMessage: err.message, stack: err.stack });
