@@ -124,12 +124,12 @@ export async function authentication(req, res, next) {
             return next();
         }
 
-        const { login_type, token } = await jwtService.getTokenPayload(refreshToken);
-
-        const [tokenType, tokenValue] = token.split(' ');
+        const [tokenType, tokenValue] = refreshToken.split(' ');
         if (tokenType === 'Bearer') {
             return next(new Error(`Invalid token`));
         }
+
+        const { login_type, token } = await jwtService.getTokenPayload(tokenValue);
 
         switch (login_type) {
             case 'kakao':
@@ -143,7 +143,7 @@ export async function authentication(req, res, next) {
                                 grant_type: 'refresh_token',
                                 client_id: process.env.REST_API_KEY,
                                 client_secret: process.env.CLIENT_SECRET_KEY,
-                                refresh_token: `Bearer ${tokenValue}`,
+                                refresh_token: `Bearer ${token}`,
                             },
                         }
                     );
@@ -175,12 +175,12 @@ export async function authentication(req, res, next) {
                 break;
             case 'uwreckcar':
                 try {
-                    const valifyToken = jwtService.validateRefreshToken(tokenValue);
+                    const valifyToken = jwtService.validateRefreshToken(token);
                     if (!valifyToken) {
                         return next(new Error('Invalid token'));
                     }
 
-                    const access_token = jwtService.getTokenPayload(tokenValue);
+                    const access_token = jwtService.getTokenPayload(token);
                     let userData = jwtService.getTokenPayload(access_token);
 
                     req.user = userData;
