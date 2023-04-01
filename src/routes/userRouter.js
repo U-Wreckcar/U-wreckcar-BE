@@ -1,5 +1,5 @@
 import express from 'express';
-import { asyncWrapper, authenticate } from '../../utils/middleware.js';
+import {asyncWrapper, authenticate, authentication} from '../../utils/middleware.js';
 import { getUserProfile } from '../controllers/user/getUserProfile.js';
 import { kakaoLogin, kakaoCallback } from '../config/kakaoStrategy.js';
 import { alreadyExists } from '../modules/user.module.js';
@@ -34,11 +34,11 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 });
 
 // 회원
-router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
+router.get('/api/users/profile', authentication, asyncWrapper(getUserProfile));
 router.post('/api/users/signup', asyncWrapper(signupForCompanyController));
 router.post('/api/users/login', asyncWrapper(signinForCompanyController));
 router.post('/api/users/email', asyncWrapper(sendEmailController));
-router.post('/api/users/emailverify', authenticate, asyncWrapper(validateEmailController));
+router.post('/api/users/emailverify', asyncWrapper(validateEmailController));
 
 router.get('/api/auth/google', googleLoginCheck); // 프로파일과 이메일 정보를 받는다.
 // 위에서 구글 서버 로그인이 되면, 구글 redirect url 설정에 따라 이쪽 라우터로 오게 된다. 인증 코드를 박게됨
