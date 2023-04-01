@@ -1,5 +1,5 @@
 import express from 'express';
-import { asyncWrapper, authenticate } from '../../utils/middleware.js';
+import {asyncWrapper, authenticate, authentication} from '../../utils/middleware.js';
 import { exportDataToExcel } from '../controllers/utm/exportDataToExcel.js';
 import { exportDataToCsv } from '../controllers/utm/exportDataToCsv.js';
 import {
@@ -32,12 +32,12 @@ router.get('/api/utms/tag/source', asyncWrapper(getUtmSources));
 router.get('/api/utms/tag/medium', asyncWrapper(getUtmMediums));
 router.post('/api/utms/trialversion', asyncWrapper(TrialversionCreateUtmController));
 // UTM 관련
-router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
-router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));
-router.post('/api/utms', authenticate, asyncWrapper(createUtmController));
-router.post('/api/utms/external', authenticate, asyncWrapper(getExternalUtmController));
-router.post('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
-router.post('/api/utms/toxlsx', authenticate, asyncWrapper(exportExcelFileController));
+router.get('/api/utms', authentication, asyncWrapper(getAllUtmsController));
+router.post('/api/utms/delete', authentication, asyncWrapper(deleteUtmController));
+router.post('/api/utms', authentication, asyncWrapper(createUtmController));
+router.post('/api/utms/external', authentication, asyncWrapper(getExternalUtmController));
+router.post('/api/utms/tocsv', authentication, asyncWrapper(exportCSVFileController));
+router.post('/api/utms/toxlsx', authentication, asyncWrapper(exportExcelFileController));
 
 // 파일 import 테스트 중
 router.post('/test', upload.any(), async (req, res) => {
