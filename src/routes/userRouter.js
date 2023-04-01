@@ -24,7 +24,7 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 
         // 기존 회원 확인 후 새로 가입.
         const existCheck = await alreadyExists(user);
-        if (existCheck)
+        // if (existCheck)
         // const token = await jwtService.createKakaoToken(refresh_token);
 
         res.status(200).send({ access_token: access_token, refresh_token: refresh_token });
