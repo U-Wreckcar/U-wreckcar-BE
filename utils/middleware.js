@@ -4,7 +4,7 @@ import jwtService from '../src/modules/jwt.module.js';
 
 export async function authenticate(req, res, next) {
     const accessToken = req.headers.authorization;
-    const refreshToken = req.headers['X-Refresh-Token'];
+    const refreshToken = req.headers['x-refresh-token'];
 
     if (!accessToken) {
         return res.status(401).json({ message: 'Unauthorized' });
@@ -114,94 +114,95 @@ export function asyncWrapper(asyncFn) {
     };
 }
 
-export async function authentication(req, res, next) {
-    try {
-        const refreshToken = req.headers['x-refresh-token'];
-
-        // 세션에 사용자 정보가 있는지 확인하고, 있다면 인증을 건너뛰기 - 매 api 요청마다의 인증 생략
-        if (req.session.user) {
-            req.user = req.session.user;
-            return next();
-        }
-
-        const [tokenType, tokenValue] = refreshToken.split(' ');
-
-        if (tokenType !== 'Bearer') {
-            return next(new Error(`Invalid token`));
-        }
-
-        const { login_type, token } = await jwtService.getTokenPayload(tokenValue);
-
-        switch (login_type) {
-            case 'kakao':
-                try {
-                    // refresh_token을 사용하여 새로운 액세스 토큰을 발급.
-                    const refreshResponse = await axios.post(
-                        'https://kauth.kakao.com/oauth/token',
-                        null,
-                        {
-                            params: {
-                                grant_type: 'refresh_token',
-                                client_id: process.env.REST_API_KEY,
-                                client_secret: process.env.CLIENT_SECRET_KEY,
-                                refresh_token: `${token}`,
-                            },
-                        }
-                    );
-
-                    // 새로 발급받은 액세스 토큰으로 사용자 정보를 다시 요청.
-                    const newResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
-                        headers: {
-                            Authorization: `Bearer ${refreshResponse.data.access_token}`,
-                        },
-                    });
-
-                    let userData = await findUserData(newResponse.data);
-                    if (!userData) {
-                        return res.redirect(`${process.env.CLIENT_URL}/login`);
-                    }
-
-                    req.user = userData;
-                    req.session.user = userData;
-                    return next();
-                } catch (refreshError) {
-                    // refresh 토큰이 만료되었거나, 잘못된 경우
-                    if (refreshError.response && refreshError.response.status === 400) {
-                        return res.status(401).json({ message: 'Invalid refresh token' });
-                    } else {
-                        return res.status(500).json({ message: 'Internal server error' });
-                    }
-                }
-            case 'google':
-                break;
-            case 'uwreckcar':
-                try {
-                    const valifyToken = jwtService.validateRefreshToken(token);
-                    if (!valifyToken) {
-                        return next(new Error('Invalid token'));
-                    }
-
-                    const access_token = jwtService.getTokenPayload(token);
-                    let userData = jwtService.getTokenPayload(access_token);
-
-                    req.user = userData;
-                    req.session.user = userData;
-                    return next();
-                } catch (refreshError) {
-                    console.log(refreshError);
-                    return res.status(401).json({ message: refreshError.message });
-                }
-            default:
-                return res.status(401).json({
-                    success: false,
-                    message: 'Invalid request.'
-                })
-        }
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({
-            success: false,
-            msg: 'Internal Server Error',
-        });
-    }
-}
+// export async function authentication(req, res, next) {
+//     try {
+//         const refreshToken = req.headers['x-refresh-token'];
+//
+//         // 세션에 사용자 정보가 있는지 확인하고, 있다면 인증을 건너뛰기 - 매 api 요청마다의 인증 생략
+//         if (req.session.user) {
+//             req.user = req.session.user;
+//             return next();
+//         }
+//
+//         const [tokenType, tokenValue] = refreshToken.split(' ');
+//
+//         if (tokenType !== 'Bearer') {
+//             return next(new Error(`Invalid token`));
+//         }
+//
+//         const { login_type, token } = await jwtService.getTokenPayload(tokenValue);
+//
+//         switch (login_type) {
+//             case 'kakao':
+//                 try {
+//                     // refresh_token을 사용하여 새로운 액세스 토큰을 발급.
+//                     const refreshResponse = await axios.post(
+//                         'https://kauth.kakao.com/oauth/token',
+//                         null,
+//                         {
+//                             params: {
+//                                 grant_type: 'refresh_token',
+//                                 client_id: process.env.REST_API_KEY,
+//                                 client_secret: process.env.CLIENT_SECRET_KEY,
+//                                 refresh_token: `${token}`,
+//                             },
+//                         }
+//                     );
+//
+//                     // 새로 발급받은 액세스 토큰으로 사용자 정보를 다시 요청.
+//                     const newResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
+//                         headers: {
+//                             Authorization: `Bearer ${refreshResponse.data.access_token}`,
+//                         },
+//                     });
+//
+//                     let userData = await findUserData(newResponse.data);
+//                     if (!userData) {
+//                         return res.redirect(`${process.env.CLIENT_URL}/login`);
+//                     }
+//
+//                     req.user = userData;
+//                     req.session.user = userData;
+//                     return next();
+//                 } catch (refreshError) {
+//                     // refresh 토큰이 만료되었거나, 잘못된 경우
+//                     if (refreshError.response && refreshError.response.status === 400) {
+//                         return res.status(401).json({ message: 'Invalid refresh token' });
+//                     } else {
+//                         return res.status(500).json({ message: 'Internal server error' });
+//                     }
+//                 }
+//             case 'google':
+//                 break;
+//             case 'uwreckcar':
+//                 try {
+//                     const valifyToken = jwtService.validateRefreshToken(token);
+//                     if (!valifyToken) {
+//                         return next(new Error('Invalid token'));
+//                     }
+//
+//                     const access_token = jwtService.getTokenPayload(token);
+//                     let userData = jwtService.getTokenPayload(access_token);
+//
+//                     req.user = userData;
+//                     req.session.user = userData;
+//                     return next();
+//                 } catch (refreshError) {
+//                     console.log(refreshError);
+//                     return res.status(401).json({ message: refreshError.message });
+//                 }
+//             default:
+//                 return res.status(401).json({
+//                     success: false,
+//                     message: 'Invalid request.'
+//                 })
+//         }
+//     } catch (err) {
+//         console.error(err);
+//         return res.status(500).json({
+//             success: false,
+//             msg: 'Internal Server Error',
+//         });
+//     }
+// }
+//

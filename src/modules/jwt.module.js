@@ -8,6 +8,12 @@ class jwtService {
             expiresIn: '3h',
         });
     };
+
+    // Refresh Token 생성
+    createRefreshToken = (userData) => {
+        return jwt.sign(userData, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
+    };
+
     // Refresh Token 생성
     createKakaoToken = (token) => {
         return jwt.sign({
