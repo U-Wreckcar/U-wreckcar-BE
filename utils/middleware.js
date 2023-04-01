@@ -144,7 +144,7 @@ export async function authentication(req, res, next) {
                                 grant_type: 'refresh_token',
                                 client_id: process.env.REST_API_KEY,
                                 client_secret: process.env.CLIENT_SECRET_KEY,
-                                refresh_token: `Bearer ${token}`,
+                                refresh_token: `${token}`,
                             },
                         }
                     );
