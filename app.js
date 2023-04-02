@@ -12,7 +12,6 @@ import morgan from 'morgan';
 import { router as UserRouter } from './src/routes/userRouter.js';
 import { router as UTMRouter } from './src/routes/utmRouter.js';
 import rateLimit from 'express-rate-limit';
-import { linearMiddleware } from './config/linear.config.js';
 // import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
 import db from './models/index.js';
 import { run as mongodb } from './config/mongo.config.js';
@@ -71,9 +70,9 @@ app.use(
         },
     })
 );
+
 app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
-app.use(linearMiddleware)
 
 const allowedOrigins = [`${process.env.CLIENT_URL}`, `${process.env.CLIENT_LOCAL}`];
 // CORS
