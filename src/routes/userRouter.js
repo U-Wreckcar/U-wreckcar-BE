@@ -12,6 +12,7 @@ import {
     signinForCompanyController,
     validateEmailController,
 } from '../controllers/user/companySignup.js';
+import Slack from '../../config/slackbot.config.js';
 const router = express.Router();
 
 // kakao 로그인
@@ -30,6 +31,7 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
         res.status(200).send({ access_token: access_token, refresh_token: refresh_token });
     } catch (err) {
         console.error(err);
+        await Slack('KakaoLogin', err)
         res.status(500).send({ errorMessage: err.message, stack: err.stack });
     }
 });

@@ -8,6 +8,7 @@ import {
 import transporter from '../../config/nodemailer.config.js';
 import { nanoid } from 'nanoid';
 import redisClient from '../../config/redis.config.js';
+import Slack from '../../../config/slackbot.config.js'
 
 export async function signupForCompanyController(req, res, next) {
     try {
@@ -39,6 +40,7 @@ export async function signupForCompanyController(req, res, next) {
         }
     } catch (err) {
         console.error(err);
+        await Slack('signupForCompanyController', err)
         res.status(500).json({ message: err.message });
     }
 }
@@ -177,6 +179,7 @@ export async function sendEmailController(req, res, next) {
         }
     } catch (err) {
         console.error(err);
+        await Slack('sendEmailController', err)
         res.status(500).json({ message: err.message });
     }
 }
@@ -202,6 +205,7 @@ export async function validateEmailController(req, res, next) {
         }
     } catch (err) {
         console.error(err);
+        await Slack('validateEmailController', err)
         res.status(500).json({ message: err.message });
     }
 }
@@ -242,6 +246,7 @@ export async function signinForCompanyController(req, res, next) {
         }
     } catch (err) {
         console.error(err);
+        await Slack('signinForCompanyController', err)
         res.status(500).json({ message: err.message });
     }
 }
