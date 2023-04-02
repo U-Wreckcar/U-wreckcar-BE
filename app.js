@@ -15,6 +15,7 @@ import rateLimit from 'express-rate-limit';
 // import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
 import db from './models/index.js';
 import { run as mongodb } from './config/mongo.config.js';
+import { async } from 'regenerator-runtime';
 
 const app = express();
 app.use(helmet());

@@ -1,21 +1,15 @@
-import Slack from 'slack-node';
+import { WebClient } from '@slack/web-api';
 
-const slack = new Slack(process.env.SLACKBOT_TOKEN);
+const slack = new WebClient(process.env.SLACKBOT_TOKEN);
 
 export default async (sender, message) => {
-    slack.api(
-        'chat.postMessage',
-        {
+    try {
+        const result = await slack.chat.postMessage({
             text: `${sender}:\n${message}`,
-            channel: '#test',
-            icon_emoji: 'slack',
-        },
-        (error, response) => {
-            if (error) {
-                console.log(error);
-                return;
-            }
-            console.log(response);
-        }
-    );
+            channel: `${process.env.CHANNEL_ID}`,
+        });
+        console.log(result);
+    } catch (err) {
+        console.error(err);
+    }
 };
