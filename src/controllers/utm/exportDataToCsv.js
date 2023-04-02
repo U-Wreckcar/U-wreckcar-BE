@@ -16,23 +16,23 @@ async function exportDataToCsv(req, res) {
     const db = config.test_db_config;
     const connection = await createConnection(db);
 
-    // const input = req.body;
+    const input = req.body;
 
-    // console.log(input);
-    const input = [
-        {
-            utm_id: 1588,
-            utm_url: 'naver.com/',
-            utm_campaign_id: 'blog',
-            utm_campaign_name: 'blogproject',
-        },
-        {
-            utm_id: 1589,
-            utm_url: 'daum.com',
-            utm_campaign_id: 'dfdfsd',
-            utm_campaign_name: 'fsdsf',
-        },
-    ];
+    console.log(input);
+    // const input = [
+    //     {
+    //         utm_id: 1588,
+    //         utm_url: 'naver.com/',
+    //         utm_campaign_id: 'blog',
+    //         utm_campaign_name: 'blogproject',
+    //     },
+    //     {
+    //         utm_id: 1589,
+    //         utm_url: 'daum.com',
+    //         utm_campaign_id: 'dfdfsd',
+    //         utm_campaign_name: 'fsdsf',
+    //     },
+    // ];
 
     const utm_id_arr = [];
     input.forEach((index) => {

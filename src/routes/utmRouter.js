@@ -23,7 +23,7 @@ const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 
 // UTM 데이터 추출 관련
-router.get('/api/utms/export/sheet/csv', asyncWrapper(exportDataToCsv));
+router.post('/api/utms/export/sheet/csv', asyncWrapper(exportDataToCsv));
 router.post('/api/utms/export/excell', asyncWrapper(exportDataToExcel));
 router.post('/api/utms/filter', asyncWrapper(utmFilters));
 router.patch('/api/utms/memo', asyncWrapper(utmMemo));
