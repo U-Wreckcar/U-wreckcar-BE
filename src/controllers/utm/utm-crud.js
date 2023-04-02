@@ -12,6 +12,7 @@ import Papa from 'papaparse';
 import fs from 'fs';
 import path from 'path';
 import { getShortUrlClickCount, deleteShortUrl } from '../../modules/mongo.module.js';
+import Slack from '../../../config/slackbot.config.js';
 const __dirname = path.resolve();
 
 export async function createUtmController(req, res, next) {
@@ -60,6 +61,7 @@ export async function createUtmController(req, res, next) {
         }
     } catch (err) {
         console.error(err);
+        await Slack('createUtmController', err)
         res.status(500).json({
             message: err.message,
             stack: err.stack,
@@ -112,6 +114,7 @@ export async function TrialversionCreateUtmController(req, res, next) {
         }
     } catch (err) {
         console.error(err);
+        await Slack('TrialversionCreateUtmController', err)
         res.status(500).json({
             message: err.message,
             stack: err.stack,
@@ -175,6 +178,7 @@ export async function deleteUtmController(req, res, next) {
         // });
     } catch (err) {
         console.error(err);
+        await Slack('deleteUtmController', err)
         res.status(500).json({
             message: err.message,
             stack: err.stack,
@@ -209,6 +213,7 @@ export async function getAllUtmsController(req, res, next) {
         res.status(200).json(result);
     } catch (err) {
         console.error(err);
+        await Slack('getAllUtmsController', err)
         res.status(500).json({
             message: err.message,
             stack: err.stack,
@@ -241,6 +246,7 @@ export async function getExternalUtmController(req, res, next) {
         res.status(200).json(result);
     } catch (err) {
         console.error(err);
+        await Slack('getExternalUtmController', err)
         res.status(500).json({
             message: err.message,
             stack: err.stack,
@@ -262,6 +268,7 @@ export async function exportCSVFileController(req, res, next) {
             .send(csvData);
     } catch (err) {
         console.error(err);
+        await Slack('exportCSVFileController', err)
         res.status(500).json({
             message: err.message,
             stack: err.stack,
@@ -287,6 +294,7 @@ export async function exportExcelFileController(req, res, next) {
         );
     } catch (err) {
         console.error(err);
+        await Slack('exportExcelFileController', err)
         res.status(500).json({
             message: err.message,
             stack: err.stack,
