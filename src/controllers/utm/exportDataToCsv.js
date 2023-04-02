@@ -72,7 +72,7 @@ async function exportDataToCsv(req, res) {
 
     res.set({
         'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="${filename}.csv"`,
+        'Content-Disposition': `attachment; filename=${filename}.csv`,
     })
         // .csvStream(csvStream)
         .status(200)
