@@ -18,26 +18,46 @@ import xlsx from 'xlsx';
 import { getUtmSources } from '../controllers/utm/utmSourceTags.js';
 import { getUtmMediums } from '../controllers/utm/utmMediumTags.js';
 import { TrialversionCreateUtmController } from '../controllers/utm/utm-crud.js';
+import {
+    trackAllUTM,
+    trackCreateUTM,
+    trackDeleteUTM,
+    trackExportCsv,
+    trackExportExcel,
+    trackExternalUTM,
+    trackUpdateMemo,
+    trackUTMFilter,
+} from '../../config/mixpanel.config.js';
 const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
 
 // UTM 데이터 추출 관련
-router.post('/api/utms/export/sheet/csv', asyncWrapper(exportDataToCsv));
-router.post('/api/utms/export/excell', asyncWrapper(exportDataToExcel));
-router.post('/api/utms/filter', asyncWrapper(utmFilters));
-router.patch('/api/utms/memo', asyncWrapper(utmMemo));
+router.post('/api/utms/export/sheet/csv', trackExportCsv, asyncWrapper(exportDataToCsv));
+router.post('/api/utms/export/excell', trackExportExcel, asyncWrapper(exportDataToExcel));
+router.post('/api/utms/filter', trackUTMFilter, asyncWrapper(utmFilters));
+router.patch('/api/utms/memo', trackUpdateMemo, asyncWrapper(utmMemo));
 router.post('/api/utms/export/filedown', asyncWrapper(file_download));
 router.get('/api/utms/tag/source', asyncWrapper(getUtmSources));
 router.get('/api/utms/tag/medium', asyncWrapper(getUtmMediums));
 router.post('/api/utms/trialversion', asyncWrapper(TrialversionCreateUtmController));
 // UTM 관련
-router.get('/api/utms', authenticate, asyncWrapper(getAllUtmsController));
-router.post('/api/utms/delete', authenticate, asyncWrapper(deleteUtmController));
-router.post('/api/utms', authenticate, asyncWrapper(createUtmController));
-router.post('/api/utms/external', authenticate, asyncWrapper(getExternalUtmController));
-router.post('/api/utms/tocsv', authenticate, asyncWrapper(exportCSVFileController));
-router.post('/api/utms/toxlsx', authenticate, asyncWrapper(exportExcelFileController));
+router.get('/api/utms', trackAllUTM, authenticate, asyncWrapper(getAllUtmsController));
+router.post('/api/utms/delete', trackDeleteUTM, authenticate, asyncWrapper(deleteUtmController));
+router.post('/api/utms', trackCreateUTM, authenticate, asyncWrapper(createUtmController));
+router.post(
+    '/api/utms/external',
+    trackExternalUTM,
+    authenticate,
+    asyncWrapper(getExternalUtmController)
+);
+router.post('/api/utms/tocsv', trackExportCsv, authenticate, asyncWrapper(exportCSVFileController));
+router.post(
+    '/api/utms/toxlsx',
+    trackExportExcel,
+    authenticate,
+    asyncWrapper(exportExcelFileController)
+);
 
 // 파일 import 테스트 중
 router.post('/test', upload.any(), async (req, res) => {
