@@ -24,6 +24,7 @@ async function getUtmMediums(req, res) {
     });
 
     console.log(result);
+    connection.end();
     return res.status(200).json({
         isSuccess: true,
         result,
