@@ -15,7 +15,7 @@ export async function run() {
     }
 }
 
-
+export const drawdb = client.db('withdraw');
 const db = client.db(`${process.env.DB_NAME}`);
 
 export default db;

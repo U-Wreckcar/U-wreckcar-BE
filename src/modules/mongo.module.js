@@ -1,4 +1,6 @@
 import db from '../../config/mongo.config.js';
+import { drawdb } from '../../config/mongo.config.js';
+import Slack from '../../config/slackbot.config.js';
 
 export async function getShortUrlClickCount(short_id) {
     try {
@@ -8,6 +10,7 @@ export async function getShortUrlClickCount(short_id) {
         return userInfo.clickCount;
     } catch (err) {
         console.error(err);
+        await Slack('getShortUrlClickCount', err);
         return err;
     }
 }
@@ -18,6 +21,20 @@ export async function deleteShortUrl(shorten_url) {
         await db.collection(`${process.env.COLLECTION_NAME}`).deleteOne({ shortId: short_id });
     } catch (err) {
         console.error(err);
+        await Slack('deleteShortUrl', err);
         return err;
+    }
+}
+
+export async function recordWithdrawReason(reason) {
+    try {
+        await drawdb.collection('reason').insertOne({
+            reason,
+        });
+        return true;
+    } catch (err) {
+        console.error(err);
+        await Slack('recordWithdrawReason', err);
+        return false;
     }
 }
