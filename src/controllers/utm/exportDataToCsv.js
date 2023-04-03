@@ -1,45 +1,22 @@
 /* eslint-disable no-unused-vars */
 import { createConnection } from 'mysql2/promise';
-import mysql from 'mysql2/promise';
 import csv from 'fast-csv';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import config from '../../config/dbconfig.js';
-import contentDisposition from 'content-disposition';
-import { file_download } from './fileDownload.js';
-import { async } from 'regenerator-runtime';
-const fsPromises = fs.promises;
 const __dirname = path.resolve();
 
 async function exportDataToCsv(req, res) {
     const db = config.test_db_config;
     const connection = await createConnection(db);
-
     const input = req.body;
-
-    console.log(input);
-    // const input = [
-    //     {
-    //         utm_id: 1588,
-    //         utm_url: 'naver.com/',
-    //         utm_campaign_id: 'blog',
-    //         utm_campaign_name: 'blogproject',
-    //     },
-    //     {
-    //         utm_id: 1589,
-    //         utm_url: 'daum.com',
-    //         utm_campaign_id: 'dfdfsd',
-    //         utm_campaign_name: 'fsdsf',
-    //     },
-    // ];
 
     const utm_id_arr = [];
     input.forEach((index) => {
         const utm_id = index['utm_id'];
         utm_id_arr.push(utm_id);
     });
-    console.log(utm_id_arr);
 
     let sql_id_add = 'WHERE ';
     let id_stack = 1;
@@ -55,7 +32,6 @@ async function exportDataToCsv(req, res) {
     const filename = 'UTM_Data_File_CSV';
     const filepath = path.join(__dirname, 'export', 'UTM_Data_File_CSV');
     const [rows] = await connection.execute(sql_query);
-    // console.log('여기는 로우스 입니달ㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ', [rows]);
 
     const csvStream = csv.format({ headers: true, encoding: 'utf8mb4' });
     csvStream.pipe(fs.createWriteStream(filepath, { encoding: 'utf8' })).on('finish', () => {
@@ -65,7 +41,7 @@ async function exportDataToCsv(req, res) {
     rows.forEach((row) => {
         csvStream.write(row);
     });
-    // mysql 연결취소
+    // mysql 연결해제
     connection.end();
 
     //----------------------
@@ -77,13 +53,6 @@ async function exportDataToCsv(req, res) {
         // .csvStream(csvStream)
         .status(200)
         .sendFile(filepath);
-    // .unlink(filepath, (err) => {
-    //     if (err) {
-    //         console.log('파일삭제 에러 : ', err);
-    //     } else {
-    //         console.log(`파일경로 : ${filepath} 의 파일이 무사히 삭제되었습니다.`);
-    //     }
-    // });
 }
 
 export { exportDataToCsv };

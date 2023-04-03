@@ -18,8 +18,9 @@ async function utmMemo(req, res) {
     const connection = await createConnection(DB_CONFIG);
 
     await connection.execute(sql_query);
+    connection.end();
 
-return res.status(200).json({
+    return res.status(200).json({
         isSuccess: true,
         msg: '메모 수정이 완료되었습니다',
         update_utm_id: inputMemo['utm_id'],
