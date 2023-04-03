@@ -15,6 +15,7 @@ import {
     setNewPasswordController,
 } from '../controllers/user/uwreckcarAccount.js';
 import Slack from '../../config/slackbot.config.js';
+import { userWithdrawal } from '../controllers/user/userWithdrawal.js';
 const router = express.Router();
 
 // kakao 로그인
@@ -39,6 +40,7 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 });
 
 // 회원
+router.get('/api/users/delete', asyncWrapper(userWithdrawal));
 router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
 router.post('/api/users/signup', asyncWrapper(signupForCompanyController));
 router.post('/api/users/login', asyncWrapper(signinForCompanyController));
