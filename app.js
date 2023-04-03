@@ -16,6 +16,7 @@ import rateLimit from 'express-rate-limit';
 import db from './models/index.js';
 import { run as mongodb } from './config/mongo.config.js';
 import { async } from 'regenerator-runtime';
+import { trackApiRequests } from './config/mixpanel.config.js';
 
 const app = express();
 app.use(helmet());
@@ -101,6 +102,7 @@ app.use(apiLimiter);
 // 카카오 로그인 전략 설정
 passport.use(kakaoStrategy);
 
+app.use(trackApiRequests);
 // Router
 app.use(UserRouter);
 app.use(UTMRouter);
@@ -115,6 +117,6 @@ app.use('error', (err, req, res, next) => {
 });
 
 app.listen(process.env.SERVER_PORT, () => {
-    process.send('ready');
+    // process.send('ready');
     console.log(`Server is listening on ${process.env.SERVER_PORT}`);
 });
