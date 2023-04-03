@@ -59,8 +59,6 @@ app.use(
     session({
         store: new RedisStore({
             client: redisClient,
-            prefix: 'session:',
-            disableTouch: true,
         }),
         secret: process.env.SESSION_SECRET_KEY,
         resave: false,
