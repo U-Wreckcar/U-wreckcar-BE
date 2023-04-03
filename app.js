@@ -64,7 +64,7 @@ app.use(
         }),
         secret: process.env.SESSION_SECRET_KEY,
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: {
             secure: process.env.NODE_ENV === 'production',
             maxAge: 1000 * 60 * 60 * 24, // 쿠키의 만료 기간을 설정합니다. 여기서는 24시간으로 설정했습니다.
