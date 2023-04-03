@@ -12,10 +12,8 @@ import morgan from 'morgan';
 import { router as UserRouter } from './src/routes/userRouter.js';
 import { router as UTMRouter } from './src/routes/utmRouter.js';
 import rateLimit from 'express-rate-limit';
-// import { exportDataToExcel } from './src/controllers/utm/exportDataToExcel.js';
 import db from './models/index.js';
 import { run as mongodb } from './config/mongo.config.js';
-import { async } from 'regenerator-runtime';
 
 const app = express();
 app.use(helmet());

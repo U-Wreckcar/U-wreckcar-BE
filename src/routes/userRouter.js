@@ -15,7 +15,11 @@ import {
     setNewPasswordController,
 } from '../controllers/user/uwreckcarAccount.js';
 import Slack from '../../config/slackbot.config.js';
-import { userWithdrawal } from '../controllers/user/userWithdrawal.js';
+import {
+    trackSetNewPassword,
+    trackSignupForCompany,
+    trackUserProfile,
+} from '../../config/mixpanel.config.js';
 const router = express.Router();
 
 // kakao 로그인
@@ -40,14 +44,19 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 });
 
 // 회원
-router.post('/api/users/userWithdrawal', asyncWrapper(userWithdrawal));
-router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
-router.post('/api/users/signup', asyncWrapper(signupForCompanyController));
+router.post('/api/users/userWithdrawal', authenticate, asyncWrapper(userWithdrawal));
+router.get('/api/users/profile', trackUserProfile, authenticate, asyncWrapper(getUserProfile));
+router.post('/api/users/signup', trackSignupForCompany, asyncWrapper(signupForCompanyController));
+
 router.post('/api/users/login', asyncWrapper(signinForCompanyController));
 router.post('/api/users/email', asyncWrapper(sendEmailController));
 router.post('/api/users/emailverify', asyncWrapper(validateEmailController));
 router.post('/api/users/passwordverify', asyncWrapper(verifyMissingPasswordToEmailController));
-router.post('/api/users/setnewpassword', asyncWrapper(setNewPasswordController));
+router.post(
+    '/api/users/setnewpassword',
+    trackSetNewPassword,
+    asyncWrapper(setNewPasswordController)
+);
 
 // router.get('/api/auth/google', googleLoginCheck); // 프로파일과 이메일 정보를 받는다.
 // // 위에서 구글 서버 로그인이 되면, 구글 redirect url 설정에 따라 이쪽 라우터로 오게 된다. 인증 코드를 박게됨
