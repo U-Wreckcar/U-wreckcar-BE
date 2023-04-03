@@ -40,7 +40,7 @@ router.get('/api/auth/kakao/callback', kakaoCallback, async (req, res) => {
 });
 
 // 회원
-router.get('/api/users/delete', asyncWrapper(userWithdrawal));
+router.post('/api/users/userWithdrawal', asyncWrapper(userWithdrawal));
 router.get('/api/users/profile', authenticate, asyncWrapper(getUserProfile));
 router.post('/api/users/signup', asyncWrapper(signupForCompanyController));
 router.post('/api/users/login', asyncWrapper(signinForCompanyController));
