@@ -1,6 +1,7 @@
 import db from '../../models/index.js';
 import { re } from '@babel/core/lib/vendor/import-meta-resolve.js';
 import crypto from 'crypto';
+import Slack from '../../config/slackbot.config.js';
 
 export async function alreadyExists(userData) {
     try {
@@ -29,6 +30,7 @@ export async function alreadyExists(userData) {
         console.error(
             `====================user.module.js/alreadyExists Error.=============================`
         );
+        await Slack('alreadyExists', err);
         return err;
     }
 }
@@ -45,6 +47,7 @@ export async function findUserData(userData) {
         console.error(
             `====================user.module.js/findUserData Error.=============================`
         );
+        await Slack('findUserData', err);
         return err;
     }
 }
@@ -79,6 +82,7 @@ export async function createCompanyUser(
         console.error(
             `====================user.module.js/createCompanyUser Error.=============================`
         );
+        await Slack('createCompanyUser', err);
         return err;
     }
 }
@@ -91,6 +95,7 @@ export async function findCompanyUserData(email) {
         console.error(
             `====================user.module.js/findCompanyUserData Error.=============================`
         );
+        await Slack('findCompanyUserData', err);
         return err;
     }
 }
@@ -103,6 +108,7 @@ export async function createSalt() {
         console.log(
             `====================user.module.js/createSalt Error.=============================`
         );
+        await Slack('createSalt', err);
         if (err instanceof Error) {
             return err;
         }
@@ -129,6 +135,17 @@ export const getHashedPassword = (plainPassword, salt) =>
             resolve({ password: key.toString('base64'), salt });
         });
     });
+
+export async function setNewPassword(email, password, salt) {
+    try {
+        await db.Users.update({ password: password, salt: salt }, { where: { email } });
+        return true;
+    } catch (err) {
+        console.error(err);
+        await Slack('setNewPassword', err);
+        return false;
+    }
+}
 
 // export async function makePasswordHashed(email, plainPassword) {
 //     try {
