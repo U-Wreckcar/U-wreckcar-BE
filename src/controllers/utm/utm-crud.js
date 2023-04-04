@@ -192,7 +192,7 @@ export async function getAllUtmsController(req, res, next) {
         let dateFixResult = await getAllUtms(user_id);
         const result = await Promise.all(
             dateFixResult.map(async (doc) => {
-                // const click_count = await getShortUrlClickCount(doc.short_id);
+                const click_count = await getShortUrlClickCount(doc.short_id);
                 return {
                     utm_id: doc.utm_id,
                     utm_url: doc.utm_url,
@@ -203,7 +203,7 @@ export async function getAllUtmsController(req, res, next) {
                     utm_memo: doc.utm_memo,
                     full_url: doc.full_url,
                     shorten_url: doc.shorten_url,
-                    // click_count,
+                    click_count,
                     utm_medium_name: doc.utm_medium_name.medium_name,
                     utm_source_name: doc.utm_source_name.source_name,
                     created_at_filter: new Date(doc.created_at).toISOString().slice(0, 10),
