@@ -36,23 +36,19 @@ async function exportDataToCsv(req, res) {
     const csvStream = csv.format({ headers: true, encoding: 'utf8mb4' });
     csvStream.pipe(fs.createWriteStream(filepath, { encoding: 'utf8' })).on('finish', () => {
         console.log('CSV 파일이 잘 완성되었습니다.');
+        res.set({
+            'Content-Type': 'text/csv',
+            'Content-Disposition': `attachment; filename=${filename}.csv`,
+        }).sendFile(filepath);
     });
 
     rows.forEach((row) => {
         csvStream.write(row);
     });
+    csvStream.end();
+
     // mysql 연결해제
     connection.end();
-
-    //----------------------
-
-    res.set({
-        'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename=${filename}.csv`,
-    })
-        // .csvStream(csvStream)
-        .status(200)
-        .sendFile(filepath);
 }
 
 export { exportDataToCsv };
