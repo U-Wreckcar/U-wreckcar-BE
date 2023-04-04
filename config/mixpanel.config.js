@@ -211,3 +211,22 @@ export function trackExternalUTM(req, res, next) {
         next();
     }
 }
+
+export function trackImportUTM(req, res, next) {
+    try {
+        const requestData = {
+            path: req.path,
+            method: req.method,
+            user_agent: req.headers['user-agent'],
+            ip: req.ip,
+            body: req.body,
+        };
+
+        mixpanel.track('Excel파일불러오기', requestData);
+
+        next();
+    } catch (err) {
+        console.error(err);
+        next();
+    }
+}
