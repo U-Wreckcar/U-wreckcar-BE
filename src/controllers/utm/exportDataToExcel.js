@@ -1,30 +1,39 @@
 import { createConnection } from 'mysql2/promise';
 import { utils, writeFile } from 'xlsx';
 import config from '../../config/dbconfig.js';
+import path from 'path';
+const __dirname = path.resolve();
 // import { utmFilters } from './utmFilter.js';
 
-async function exportDataToExcel(req) {
-    const utm_id_arr = req;
+async function exportDataToExcel(req, res) {
+    // db 연결
+    const db = config.test_db_config;
+    const connection = await createConnection(db);
 
-    // db 연결용 config
-    const DB_CONFIG = config.test_db_config;
+    const input = req.body;
 
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const date = today.getDate();
-    const hours = today.getHours();
-    const minutes = today.getMinutes();
-    const seconds = today.getSeconds();
-    const nowTime = year + '-' + month + '-' + date + '-' + hours + minutes + seconds;
+    console.log(input);
+    // const input = [
+    //     {
+    //         utm_id: 1588,
+    //         utm_url: 'naver.com/',
+    //         utm_campaign_id: 'blog',
+    //         utm_campaign_name: 'blogproject',
+    //     },
+    //     {
+    //         utm_id: 1589,
+    //         utm_url: 'daum.com',
+    //         utm_campaign_id: 'dfdfsd',
+    //         utm_campaign_name: 'fsdsf',
+    //     },
+    // ];
 
-    // 파일경로이자 마지막 / 뒤에는 내가 저장하게될 파일 이름 + 확장자 현재경로는 바탕하면으로 할 예정
-    // const FILE_PATH = `/Users/User/${file_name} + ${nowTime}.xlsx`;
-
-    const filename = 'UTM_Data_File_Excell ' + nowTime + '.csv';
-    const path = `src\\controllers\\utm\\export\\` + `${filename}`;
-    // const filename = 'UTM_Data_File_CSV ' + nowTime + '.csv';
-    // const outputPath = `src\\controllers\\utm\\export\\` + `${filename}`;
+    const utm_id_arr = [];
+    input.forEach((index) => {
+        const utm_id = index['utm_id'];
+        utm_id_arr.push(utm_id);
+    });
+    console.log(utm_id_arr);
 
     let sql_id_add = 'WHERE ';
     let id_stack = 1;
@@ -33,51 +42,33 @@ async function exportDataToExcel(req) {
         if (id_stack < 0) {
             sql_id_add = sql_id_add + 'or ';
         }
-        sql_id_add = sql_id_add + `utm_id = '${id}' `;
+        sql_id_add = sql_id_add + `utm.utm_id = '${id}' `;
     });
+    const sql_query = `SELECT  DATE_FORMAT(utm.created_at, '%Y-%m-%d') as 생성일자, utm.utm_url as URL ,utm.utm_campaign_id as 캠페인ID,utm.utm_url, source.source_name as 소스, medium.medium_name as 미디움, utm.utm_campaign_name as 캠페인이름, utm.utm_term as 캠페인_텀, utm.utm_content as 캠페인콘텐츠, utm.full_url as UTM, utm.shorten_url as Shorten_URL, utm.utm_memo as 메모 FROM uwreckcar_db.Utms as utm LEFT join User_utm_sources as source on utm.user_utm_source_id = source.user_utm_source_id JOIN User_utm_mediums as medium on utm.user_utm_medium_id = medium.user_utm_medium_id ${sql_id_add} group by utm.utm_id `;
 
-    const SQL_QUERY = `SELECT source.source_name as '소스ID', medium.medium_name as '미디움ID',utm.utm_url as 'url', utm.utm_campaign_id as '캠페인 ID', utm.utm_campaign_name as '캠페인 이름', utm.utm_term as '캠페인 텀', utm.utm_content as '캠페인 컨텐츠', utm.utm_memo as '메모' FROM uwreckcar_db.Utms as utm inner join User_utm_sources as source inner join User_utm_mediums as medium ${sql_id_add} `;
-
-    const FILE_PATH = `${path}${filename}.xlsx`;
-    // const SQL_QUERY = await utmFilters(query);
-
-    // db 연결
-    const connection = await createConnection(DB_CONFIG);
+    const filename = 'UTM_Data_File_Excell';
+    const filepath = path.join(__dirname, 'export', 'UTM_Data_File_Excell');
 
     // 쿼리 실행 후 rows 에 담기
-    const [rows] = await connection.execute(SQL_QUERY);
-
-    // // 쿼리 실행 후 rows 에 담기
-    // const [rows] = await connection.execute(SQL_QUERY);
+    const [rows] = await connection.execute(sql_query);
 
     // 새로운 파일이랑 워크시트 생성
     const workbook = utils.book_new();
     const worksheet = utils.json_to_sheet(rows);
-    // console.log(worksheet);
 
     // 워크북에 워크시트 추가
     utils.book_append_sheet(workbook, worksheet);
 
     // 해당 경로에 워크북 파일 생성
-    writeFile(workbook, FILE_PATH);
+    writeFile(workbook, filepath);
+    connection.end();
 
-    // console.log(`파일 내보내기가 잘 실행되었습니다. 파일이 저장된 경로는 -> ${FILE_PATH}`);
-    let contentType = '';
-    if (filename.endsWith('.xlsx')) {
-        contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    }
-    return {
-        isSuccess: true,
-        msg: 'CSV 파일 내보내기가 잘 실행되었습니다.',
-        filename,
-        FILE_PATH,
-        contentType,
-    };
-
-    // return res.status(200).json({
-    //     isSuccess: true,
-    //     msg: '파일 내보내기가 잘 실행되었습니다.',
-    // });
+    res.set({
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': `attachment; filename=${filename}.xlsx`,
+    })
+        .status(200)
+        .sendFile(filepath);
 }
 
 export { exportDataToExcel };
