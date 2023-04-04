@@ -12,17 +12,18 @@ export async function alreadyExists(userData) {
         });
 
         if (!checkDuplicate) {
-            const result = await db.Users.create({
-                username: userData.properties.nickname,
-                profile_img: userData.properties.profile_image,
-                email: userData.kakao_account.email,
-                password: '-',
-                salt: '-',
-                company_name: '-',
-                marketing_accept: true,
-                login_type: 'kakao',
-            });
-            return result.dataValues;
+            // const result = await db.Users.create({
+            //     username: userData.properties.nickname,
+            //     profile_img: userData.properties.profile_image,
+            //     email: userData.kakao_account.email,
+            //     password: '-',
+            //     salt: '-',
+            //     company_name: '-',
+            //     marketing_accept: true,
+            //     login_type: 'kakao',
+            // });
+            // return result.dataValues;
+            return false;
         } else {
             return checkDuplicate;
         }
