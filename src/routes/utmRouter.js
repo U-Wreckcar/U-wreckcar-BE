@@ -25,9 +25,11 @@ import {
     trackExportCsv,
     trackExportExcel,
     trackExternalUTM,
+    trackImportUTM,
     trackUpdateMemo,
     trackUTMFilter,
 } from '../../config/mixpanel.config.js';
+import { importDataToExcelController } from '../controllers/utm/importDataToExcel.js';
 const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
@@ -60,20 +62,6 @@ router.post(
 );
 
 // 파일 import 테스트 중
-router.post('/test', upload.any(), async (req, res) => {
-    const data = req.files[0];
-    console.log(req.files[0].filename); // 이걸로 데이터 저장 후 서버에 남지 않게 다시 삭제할 때 찾아서 쓰면될듯, 아니면 filepath 하면 경로랑 이름 붙어서 다나옴
-    function parseExcel(file) {
-        const workbook = xlsx.readFile(file.path);
-        const sheet_name_list = workbook.SheetNames;
-        const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
-        return data;
-    }
-
-    const parseData = parseExcel(data);
-    console.log(parseData);
-    // 내용
-    // 쇼튼 없으면 주어진 utm 링크로 만들어주기? 각 칼럼명이 지정한 칼럼명으로 변경되었는지 확인? 그 외 없는 칼럼은 버리도록?
-});
+router.post('/api/utms/importdata', upload.any(), trackImportUTM, authenticate, importDataToExcelController);
 
 export { router };
