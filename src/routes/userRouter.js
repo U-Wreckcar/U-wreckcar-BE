@@ -3,6 +3,7 @@ import { asyncWrapper, authenticate } from '../../utils/middleware.js';
 import { getUserProfile } from '../controllers/user/getUserProfile.js';
 import { kakaoLogin, kakaoCallback } from '../config/kakaoStrategy.js';
 import { alreadyExists } from '../modules/user.module.js';
+import { userWithdrawal } from '../controllers/user/userWithdrawal.js';
 // import jwtService from '../modules/jwt.module.js';
 // import { googleLoginCheck } from '../passport/googleStrategy.js';
 // import { googleCallback } from '../passport/googleStrategy.js';
