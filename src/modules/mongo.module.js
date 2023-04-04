@@ -18,11 +18,12 @@ export async function getShortUrlClickCount(short_id) {
 export async function deleteShortUrl(shorten_url) {
     try {
         const short_id = shorten_url.slice(27);
-        await db.collection(`${process.env.COLLECTION_NAME}`).deleteOne({ shortId: short_id });
+        const result =  db.collection(`${process.env.COLLECTION_NAME}`).deleteOne({ shortId: short_id });
+        return (await result).acknowledged
     } catch (err) {
         console.error(err);
         await Slack('deleteShortUrl', err);
-        return err;
+        return false;
     }
 }
 
