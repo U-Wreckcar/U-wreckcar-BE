@@ -38,17 +38,9 @@ async function exportDataToCsv(req, res) {
         console.log('CSV 파일이 잘 완성되었습니다.');
     });
 
-    for (const row of rows) {
-        await new Promise((resolve, reject) => {
-            csvStream.write(row, (err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
+    rows.forEach((row) => {
+        csvStream.write(row);
+    });
     // mysql 연결해제
     connection.end();
 
