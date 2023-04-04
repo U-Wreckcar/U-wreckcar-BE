@@ -8,14 +8,12 @@ export async function userWithdrawal(req, res, next) {
     try {
         const { user_id } = req.user;
         const { reason } = req.body.data;
-        // const user_id = '108';
         const user_utm = await getAllUtms(user_id);
 
         const delete_shorten_utm_arr = user_utm.map((index) => index.shorten_url);
 
         const deleteResult = delete_shorten_utm_arr.map(async (shorten_url) => {
             const result = await deleteShortUrl(shorten_url);
-            console.log(`${shorten_url} 삭제가 완료되었습니다.`);
             return result;
         });
         await recordWithdrawReason(reason);
@@ -27,7 +25,8 @@ export async function userWithdrawal(req, res, next) {
             });
         } else {
             res.status(200).json({
-                msg: '유저 탈퇴가 완료되었습니다.',
+                success: true,
+                message: '유저 탈퇴가 완료되었습니다.',
             });
         }
     } catch (err) {
