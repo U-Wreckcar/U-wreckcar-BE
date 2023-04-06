@@ -5,8 +5,8 @@ import { kakaoLogin, kakaoCallback } from '../config/kakaoStrategy.js';
 import { alreadyExists } from '../modules/user.module.js';
 import { userWithdrawal } from '../controllers/user/userWithdrawal.js';
 // import jwtService from '../modules/jwt.module.js';
-// import { googleLoginCheck } from '../passport/googleStrategy.js';
-// import { googleCallback } from '../passport/googleStrategy.js';
+import { googleLoginCheck } from '../passport/googleStrategy.js';
+import { googleCallback } from '../passport/googleStrategy.js';
 import {
     sendEmailController,
     signupForCompanyController,
@@ -63,15 +63,26 @@ router.post(
     asyncWrapper(setNewPasswordController)
 );
 
-// router.get('/api/auth/google', googleLoginCheck); // 프로파일과 이메일 정보를 받는다.
-// // 위에서 구글 서버 로그인이 되면, 구글 redirect url 설정에 따라 이쪽 라우터로 오게 된다. 인증 코드를 박게됨
-// router.get('/auth/google/callback', googleCallback, async (req, res) => {
-//     try {
-//         const { access_token, refresh_token } = req.user;
-//         res.status(200).send({ access_token: access_token, refresh_token: refresh_token });
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).send({ errorMessage: err.message });
-//     }
-// });
+router.get(
+    '/api/auth/google',
+    (req, res, next) => {
+        req.query.prompt = 'consent';
+        next();
+    },
+    googleLoginCheck
+);
+
+router.get('/auth/google/callback', googleCallback, async (req, res) => {
+    try {
+        const { accessToken, refreshToken } = req.user;
+
+        // console.log('최종적으로 만들어진 리프레시 토큰 => ', refreshToken);
+        // console.log('최종적으로 만들어진 액세스 토큰 => ', accessToken);
+        res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ errorMessage: err.message });
+    }
+});
+
 export { router };
