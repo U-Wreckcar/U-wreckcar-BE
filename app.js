@@ -4,6 +4,7 @@ import passport from 'passport';
 import session from 'express-session';
 import RedisStore from 'connect-redis';
 import redisClient from './src/config/redis.config.js';
+import pm2 from 'pm2';
 import helmet from 'helmet';
 import { kakaoStrategy } from './src/config/kakaoStrategy.js';
 import cors from 'cors';
@@ -14,6 +15,7 @@ import { router as UTMRouter } from './src/routes/utmRouter.js';
 import rateLimit from 'express-rate-limit';
 import db from './models/index.js';
 import { run as mongodb } from './config/mongo.config.js';
+import Slack from './config/slackbot.config.js';
 
 const app = express();
 app.use(helmet());
@@ -112,7 +114,21 @@ app.use('error', (err, req, res, next) => {
     });
 });
 
+pm2.launchBus((error, bus) => {
+    if (error) {
+        console.error('PM2 이벤트 버스 연결 실패:', error);
+        return;
+    }
+
+    bus.on('process:event', async (data) => {
+        if (data.event === 'exit') {
+            console.log('PM2에서 관리되는 서버 프로세스가 종료되었습니다:', data.process.name);
+            await Slack(`PM2 Server Process`, `PM2에서 관리되는 서버 프로세스(${data.process.name})가 종료되었습니다.`);
+        }
+    });
+});
+
 app.listen(process.env.SERVER_PORT, () => {
-    // process.send('ready');
+    process.send('ready');
     console.log(`Server is listening on ${process.env.SERVER_PORT}`);
 });
