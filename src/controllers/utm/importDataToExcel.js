@@ -104,7 +104,10 @@ export async function importDataToExcelController(req, res, next) {
             fs.unlink(filepath, (err) =>
                 err ? console.log(err) : console.log(`${filepath} 를 정상적으로 삭제했습니다`)
             );
-            res.status(400).json(result);
+            res.status(400).json({
+                success: false,
+                message: 'few data failed.',
+                result});
         } else {
             fs.unlink(filepath, (err) =>
                 err ? console.log(err) : console.log(`${filepath} 를 정상적으로 삭제했습니다`)
