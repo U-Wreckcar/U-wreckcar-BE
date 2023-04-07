@@ -125,7 +125,7 @@ pm2.launchBus((error, bus) => {
             console.log('PM2에서 관리되는 서버 프로세스가 종료되었습니다:', data.process.name);
             await Slack(
                 `PM2 Server Process`,
-                `PM2에서 관리되는 서버 프로세스(${data.process})가 예상하지 못한 에러로 종료되고 재실헹합니다. \n 내용 : ${data}`
+                `PM2에서 관리되는 서버 프로세스(${data.process.name})가 예상하지 못한 에러로 종료되고 재실헹합니다. \n 내용 : ${data.process.stderr}`
             );
         }
     });
