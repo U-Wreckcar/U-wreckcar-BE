@@ -28,28 +28,28 @@ export async function importDataToExcelController(req, res, next) {
             }
         }
 
-        // 템플릿 유효한지 확인
-        const hasKey = parseData.some((data) => {
-            return Object.keys(data).some(
-                (key) => !['created_at', 'utm_memo', 'full_url'].includes(key)
-            );
-        });
+        // // 템플릿 유효한지 확인
+        // const hasKey = parseData.some((data) => {
+        //     return Object.keys(data).some(
+        //         (key) => !['created_at', 'utm_memo', 'full_url'].includes(key)
+        //     );
+        // });
 
-        if (hasKey) {
-            throw new Error(`Includes invalid column key`);
-        }
-
-        // 템플릿 유효한지 확인
-        // for (let i = 0; i < parseData.length; i++) {
-        //     if (
-        //         !(
-        //             Object.keys(parseData[i]).includes('full_url') &&
-        //             Object.keys(parseData[i]).includes('utm_memo') &&
-        //             Object.keys(parseData[i]).includes('created_at')
-        //         )
-        //     )
-        //         throw new Error(`invalid key "${Object.keys(parseData[i])}"`);
+        // if (hasKey) {
+        //     throw new Error(`Includes invalid column key`);
         // }
+
+        // 템플릿 유효한지 확인
+        for (let i = 0; i < parseData.length; i++) {
+            if (
+                !(
+                    Object.keys(parseData[i]).includes('full_url') &&
+                    Object.keys(parseData[i]).includes('utm_memo') &&
+                    Object.keys(parseData[i]).includes('created_at')
+                )
+            )
+                throw new Error(`invalid key "${Object.keys(parseData[i])}"`);
+        }
 
         const dateRegexp = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
         const urlRegexp = /^https:\/\//;
