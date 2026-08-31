@@ -76,3 +76,5 @@ GA 사용하기도 벅찬데, UTM 수작업까지 해야돼? 🤷‍♂️
 
 
 <!-- Security scan triggered at 2025-11-24 23:35:09 -->
+
+<!-- Security scan triggered at 2026-08-31 16:48:25 -->
